@@ -1,0 +1,29 @@
+{
+  "migIndex": 1,
+  "data": [
+    {
+      "path": "src/assets/fonts/Overlock-Black.ttf",
+      "sha1": "b55dd88c9f449ee506a5824b39bb8af4c9c6dda6"
+    },
+    {
+      "path": "src/assets/fonts/Overlock-BlackItalic.ttf",
+      "sha1": "c790140a9208ea82bca839debadc7df0a42d3944"
+    },
+    {
+      "path": "src/assets/fonts/Overlock-Bold.ttf",
+      "sha1": "b81fe6e9233f77b01991c72b5c28279b3a4f8aab"
+    },
+    {
+      "path": "src/assets/fonts/Overlock-BoldItalic.ttf",
+      "sha1": "987a44bf4586b27b3fde1344cbcb6d5489be55dd"
+    },
+    {
+      "path": "src/assets/fonts/Overlock-Italic.ttf",
+      "sha1": "a503d42870ce1d8fb6bcbce3fca0c8b2ae38cb1a"
+    },
+    {
+      "path": "src/assets/fonts/Overlock-Regular.ttf",
+      "sha1": "952fbff23d5d297ce265c75f50ae61ff862f733c"
+    }
+  ]
+}

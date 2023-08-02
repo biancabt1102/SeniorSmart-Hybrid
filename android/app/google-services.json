@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "314561212959",
+    "project_id": "seniorsmart",
+    "storage_bucket": "seniorsmart.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:314561212959:android:cacf0a804f60cca4d3db2a",
+        "android_client_info": {
+          "package_name": "com.seniorsmart"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "314561212959-8kj5i8mhpnke4c8fpsifdnujb1drjigp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDPoyeDcw0EZ3u4hQHXPd35x35zH2AJbvk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "314561212959-8kj5i8mhpnke4c8fpsifdnujb1drjigp.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
