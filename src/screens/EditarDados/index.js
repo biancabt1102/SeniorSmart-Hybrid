@@ -1,6 +1,10 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { View, StyleSheet, TextInput, TouchableOpacity, Alert, ScrollView } from "react-native";
 import Texto from "../../components/Texto";
+import { alterarUsuario } from "../../services/requests/usuario"
+
+import AuthContext from "../../components/AuthContext"; // Importe o AuthContext
+
 
 export default function EditarDados({ route, navigation }) {
   const [nome, setNome] = useState(route.params.usuario);
@@ -8,9 +12,12 @@ export default function EditarDados({ route, navigation }) {
   const [telefone, setTelefone] = useState(route.params.telefone);
   const [data, setData] = useState(route.params.data);
   const [confirmarSenha, setConfirmarSenha] = useState("");
-  const senha = route.params.senha;
+  const authContext = useContext(AuthContext);
+  const senha = authContext.userSenha;
 
   async function alterar() {
+    console.log(authContext.usuarioId)
+    
     if (!nome || !email || !telefone || !data || !confirmarSenha) {
       Alert.alert("Erro", "Por favor, preencha todos os campos.");
       return;
@@ -25,6 +32,7 @@ export default function EditarDados({ route, navigation }) {
       Alert.alert("Erro", "Por favor, insira um número de telefone válido.");
       return;
     }
+    
 
     if (senha !== confirmarSenha) {
       Alert.alert("Erro", "A senha digitada não corresponde à senha atual.");
@@ -33,7 +41,7 @@ export default function EditarDados({ route, navigation }) {
 
     // Restante do código para editar os dados
     const resultado = await alterarUsuario(
-      route.params.idUsuario,
+      authContext.usuarioId,
       nome,
       email,
       route.params.usuario.senhaUsuario,

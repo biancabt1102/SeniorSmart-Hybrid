@@ -1,17 +1,19 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { View, StyleSheet, TextInput, Alert, ScrollView } from "react-native";
 import Texto from "../../components/Texto";
 import { TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import AuthContext from "../../components/AuthContext"; // Importe o AuthContext
+
 
 export default function EditarCartao({ route }) {
-  const [idUsuario, setIdUsuario] = useState(route.params.usuario.idUsuario);
   const [Titular, setTitular] = useState("");
   const [numero, setNumero] = useState("");
   const [validade, setValidade] = useState("");
   const [cvv, setCvv] = useState("");
   const [confirmarSenha, setConfirmarSenha] = useState("");
-  const senha = route.params.usuario.senhaUsuario;
+  const authContext = useContext(AuthContext);
+  const senha = authContext.userSenha;
   const navigation = useNavigation();
 
   function validarCampos() {
@@ -57,7 +59,7 @@ export default function EditarCartao({ route }) {
     if (validarCampos()) {
       // Restante do código para editar o cartão
       const resultado = await editarCartao(
-        idUsuario,
+        authContext.usuarioId,
         Titular,
         numero,
         validade,

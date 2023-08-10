@@ -7,12 +7,12 @@ import AuthContext from '../../components/AuthContext';
 
 export default function Perfil() {
   const [usuario, setUsuario] = useState({});
-  const { userIdPlano, userToken } = useContext(AuthContext);
+  const { userIdPlano } = useContext(AuthContext);
   const navigation = useNavigation();
 
   async function busca() {
     try {
-      const resultado = await buscaUsuarioPorIdPlano(userIdPlano, userToken);
+      const resultado = await buscaUsuarioPorIdPlano(userIdPlano);
       if (resultado != null) {
         setUsuario(resultado);
       } else {

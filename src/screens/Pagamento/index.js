@@ -1,13 +1,15 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import Header from "../../components/Header";
 import { View, StyleSheet, TextInput, Alert } from "react-native";
 import Texto from "../../components/Texto";
 import { TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { cadastrarPagamento } from "../../services/requests/pagamento";
+import AuthContext from '../../components/AuthContext';
 
 export default function Pagamento({ route }) {
   const navigation = useNavigation();
+  const { userIdPlano } = useContext(AuthContext);
   const [nomeCartao, setNomeCartao] = useState("");
   const [numeroCartao, setNumeroCartao] = useState("");
   const [numeroSemEspaco, setNumeroSemEspaco] = useState("");
@@ -20,7 +22,7 @@ export default function Pagamento({ route }) {
       numeroSemEspaco,
       validade,
       cvv,
-      route.params.planoid,
+      userIdPlano,
       route.params.tipo,
       route.params.mensal,
       route.params.anual,

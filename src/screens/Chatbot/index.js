@@ -103,7 +103,7 @@ function Chatbot({ route }) {
       <View style={[estilos.mensagemContainer, mensagemContainerStyle]}>
         <Text style={[estilos.mensagemContent, mensagemTextStyle]}>{item.content}</Text>
         <Text style={[estilos.mensagemAutor, mensagemAutorStyle]}>
-          {item.isUser ? route.params.usuario.usuario : 'Sexta-feira'}
+          {item.isUser ? (route.params?.usuario || 'você') : 'Sexta-feira'}
         </Text>
       </View>
     );

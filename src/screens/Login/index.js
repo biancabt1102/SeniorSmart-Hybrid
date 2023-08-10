@@ -61,7 +61,8 @@ export default function Login({ route }) {
       // Restante do código para realizar o login
       // Navegue para a próxima tela ou realize a autenticação do usuário
       login();
-      navigation.navigate('Chatbot', {usuario: response.nome});
+      const usuario = response.nome;
+      navigation.navigate('Chatbot', {usuario});
     }
   }
 

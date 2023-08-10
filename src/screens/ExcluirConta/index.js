@@ -1,11 +1,16 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { View, StyleSheet, TextInput, TouchableOpacity, Alert, ScrollView } from "react-native";
 import Texto from "../../components/Texto";
 import { deletarUsuario } from "../../services/requests/usuario";
 
+import AuthContext from "../../components/AuthContext"; // Importe o AuthContext
+
 export default function ExcluirConta({ route, navigation }) {
-  const senha = route.params.usuario.senhaUsuario;
+  const authContext = useContext(AuthContext);
+  const { setIsLoggedIn } = useContext(AuthContext);
+  const senha = authContext.userSenha;
   const [confirmarSenha, setConfirmarSenha] = useState("");
+  
 
   function deletar() {
     if (confirmarSenha === senha) {
@@ -13,7 +18,8 @@ export default function ExcluirConta({ route, navigation }) {
 
       if (resultado === "sucesso") {
         Alert.alert("Conta excluída com sucesso!");
-        navigation.goBack();
+        setIsLoggedIn(false);
+        navigation.navigate('Home');
       } else {
         Alert.alert("Erro ao excluir a conta!");
       }

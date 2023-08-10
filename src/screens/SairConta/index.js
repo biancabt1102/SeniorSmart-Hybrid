@@ -1,14 +1,23 @@
-import React from "react";
+import React, { useContext } from "react";
 import Texto from "../../components/Texto"
 import { TouchableOpacity, View, StyleSheet } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import AuthContext from "../../components/AuthContext"; // Importe o AuthContext
+
 
 export default function SairConta() {
     const navigation = useNavigation();
+    const { setIsLoggedIn } = useContext(AuthContext);
+
+    function sair() {
+        setIsLoggedIn(false);
+        navigation.navigate('Home');
+    }
+
     return <View style={estilos.container}>
         <Texto style={estilos.titulo}>Deseja sair da conta?</Texto>
         <View style={estilos.opcoes}>
-            <TouchableOpacity style={estilos.botoes} onPress={() => navigation.goBack()}>
+            <TouchableOpacity style={estilos.botoes} onPress={() => sair()}>
                 <Texto style={estilos.textos}>Sim</Texto>
             </TouchableOpacity>
             <TouchableOpacity style={estilos.botoes} onPress={() => navigation.goBack()}>

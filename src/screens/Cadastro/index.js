@@ -1,12 +1,15 @@
-import React, { useRef, useState } from "react";
+import React, { useContext, useRef, useState } from "react";
 import { TextInput, TouchableOpacity, View, StyleSheet, Alert } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import Texto from "../../components/Texto";
+import AuthContext from "../../components/AuthContext"; // Importe o AuthContext
+
 
 export default function Cadastro() {
   const [nomeUsuario, setNomeUsuario] = useState('');
   const [emailUsuario, setEmailUsuario] = useState('');
   const [senhaUsuario, setSenhaUsuario] = useState('');
+  const authContext = useContext(AuthContext);
   const [confirmarSenhaUsuario, setConfirmarSenhaUsuario] = useState('');
   const [nascimentoUsuario, setNascimentoUsuario] = useState('');
   const [telefoneUsuario, setTelefoneUsuario] = useState('');
@@ -80,6 +83,7 @@ export default function Cadastro() {
   };
 
   const handleCadastro = () => {
+    authContext.setUserSenha(senhaUsuario);
     if (validarCampos()) {
       navigation.navigate('PlanoComTeste', {
         usuario: nomeUsuario, 

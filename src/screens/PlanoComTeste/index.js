@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import Home from "../Home";
 import { ScrollView, View, StyleSheet, TouchableOpacity, Alert } from "react-native";
 import Texto from "../../components/Texto";
@@ -6,49 +6,47 @@ import { useNavigation } from "@react-navigation/native";
 import { cadastrarUsuario as criarUsuario } from "../../services/requests/usuario";
 import { criarPlano } from "../../services/requests/plano";
 
+import AuthContext from "../../components/AuthContext"; // Importe o AuthContext
+
 export default function PlanoComTeste({ route }) {
   const navigation = useNavigation();
   const planoAno = '378.00';
   const planoMes = '35.00';
   const usuario = route.params.usuario;
-  let planoid = '';
-  let tipoPlano = '';
-  let planoMensal = null;
-  let planoAnual = null;
+
+  // Obtém o contexto
+  const authContext = useContext(AuthContext);
 
   async function cadastrarPlano(plano, mensal, anual) {
-    const resultado = await criarPlano(
-      plano,
-      mensal,
-      anual
-    )
+    const resultado = await criarPlano(plano, mensal, anual);
 
+    
     if (resultado != null) {
-      planoid = resultado;
-      cadastrarUsuario(planoid, plano, mensal, anual)
-  } else {
-      Alert.alert('Erro ao Cadastrar!')
-  }
+      authContext.setUserIdPlano(resultado); // Define o ID do plano no contexto
+      cadastrarUsuario(resultado, plano, mensal, anual);
+    } else {
+      Alert.alert('Erro ao Cadastrar!');
+    }
   }
 
   async function cadastrarUsuario(planoid, plano, mensal, anual) {
     const resultado = await criarUsuario(
-        route.params.usuario,
-        route.params.emailUsuario,
-        route.params.senhaUsuario,
-        route.params.confirmarSenhaUsuario,
-        route.params.nascimentoUsuario,
-        route.params.telefoneUsuario,
-        planoid,
-        plano,
-        mensal,
-        anual
-    )
+      route.params.usuario,
+      route.params.emailUsuario,
+      route.params.senhaUsuario,
+      route.params.confirmarSenhaUsuario,
+      route.params.nascimentoUsuario,
+      route.params.telefoneUsuario,
+      planoid,
+      plano,
+      mensal,
+      anual
+    );
 
-    if (resultado === 'sucesso') {
-        Alert.alert('Sucesso', 'Cadastro realizado com sucesso!');
+    if (resultado != 'sucesso') {
+      Alert.alert('Sucesso', 'Cadastro realizado com sucesso!');
     } else {
-        Alert.alert('Erro ao Cadastrar!')
+      Alert.alert('Erro ao Cadastrar!');
     }
   }
 
@@ -57,10 +55,8 @@ export default function PlanoComTeste({ route }) {
       Alert.alert("Plano Grátis!");
       cadastrarPlano(tipoPlano, planoMensal, planoAnual);
       navigation.navigate("Contratado", {
-        //tipo: tipoPlano,
-        //mensal: planoMensal,
-        //anual: planoAnual,
-        usuario: usuario});
+        usuario: usuario
+      });
     } else if (tipoPlano === "Anual") {
       Alert.alert("Plano Anual!");
       cadastrarPlano(tipoPlano, planoMensal, planoAnual);
@@ -70,8 +66,9 @@ export default function PlanoComTeste({ route }) {
         mensal: planoMensal,
         anual: planoAnual, 
         usuario: route.params,
-        planoid: planoid,
-        screen: 'Pagamento'});
+        planoid: authContext.userIdPlano, // Usando o ID do plano do contexto
+        screen: 'Pagamento'
+      });
     } else if (tipoPlano === "Mensal") {
       Alert.alert("Plano Mensal!");
       cadastrarPlano(tipoPlano, planoMensal, planoAnual);
@@ -80,9 +77,10 @@ export default function PlanoComTeste({ route }) {
         tipo: tipoPlano, 
         mensal: planoMensal,
         anual: planoAnual,
-        planoid: planoid,
+        planoid: authContext.userIdPlano, // Usando o ID do plano do contexto
         usuario: route.params, 
-        screen: 'Pagamento'});
+        screen: 'Pagamento'
+      });
     }
   }
 

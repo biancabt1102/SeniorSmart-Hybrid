@@ -1,17 +1,30 @@
 import api from '../api';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { obterToken } from '../../components/TokenManager';
 
 export async function buscaUsuario(idUsuario) {
   try {
-      const resultado = await api.get(`/pagamentos/${idUsuario}`);
-      return resultado;
+    const response = await api.get(`/pagamentos/${idUsuario}`, {
+      headers: {
+        Authorization: `Bearer ${await obterToken()}`
+      }
+    });
+    return response.data;
   } catch (error) {
-      console.log(error)
-      return''
+    console.log(error);
+    return '';
   }
 }
 
-export async function cadastrarPagamento(nomeCartao, numeroCartao, validade, cvv, planoid, tipoPlano, planoMensal, planoAnual) {
+export async function cadastrarPagamento(
+  nomeCartao,
+  numeroCartao,
+  validade,
+  cvv,
+  planoid,
+  tipoPlano,
+  planoMensal,
+  planoAnual
+) {
   console.log(nomeCartao, numeroCartao, validade, cvv, planoid, tipoPlano, planoMensal, planoAnual);
   try {
     const requestBody = {
@@ -27,7 +40,11 @@ export async function cadastrarPagamento(nomeCartao, numeroCartao, validade, cvv
       }
     };
 
-    const response = await api.post('/pagamentos/cadastro', requestBody);
+    const response = await api.post('/pagamentos/cadastro', requestBody, {
+      headers: {
+        Authorization: `Bearer ${await obterToken()}`
+      }
+    });
 
     if (response.status === 200 || response.status === 201) {
       return 'sucesso';
@@ -37,17 +54,62 @@ export async function cadastrarPagamento(nomeCartao, numeroCartao, validade, cvv
   } catch (error) {
     console.log(error);
     return 'erro';
-  } 
+  }
 }
-
 
 export async function buscaPagamentoPlano(idPlano) {
   try {
-    const response = await api.get(`/api/pagamentos/buscarPorPlano/${idPlano}`);
-    return response.data; // Retorna somente os dados da resposta, excluindo o status e os cabeçalhos
+    const response = await api.get(`/api/pagamentos/buscarPorPlano/${idPlano}`, {
+      headers: {
+        Authorization: `Bearer ${await obterToken()}`
+      }
+    });
+    return response.data;
   } catch (error) {
     console.log(error);
     return null;
+  }
+}
+
+export async function editarCartao(
+  idUsuario,
+  nomeCartao,
+  numeroCartao,
+  validade,
+  cvv,
+  planoid,
+  tipoPlano,
+  planoMensal,
+  planoAnual
+) {
+  try {
+    const requestBody = {
+      nomeNoCartao: nomeCartao,
+      numeroDoCartao: numeroCartao,
+      validadeDoCartao: validade,
+      codigoDoCartao: cvv,
+      plano: {
+        id: planoid,
+        tipoPlano: tipoPlano,
+        planoMensal: planoMensal,
+        planoAnual: planoAnual
+      }
+    };
+
+    const response = await api.put(`/pagamentos/${idUsuario}`, requestBody, {
+      headers: {
+        Authorization: `Bearer ${await obterToken()}`
+      }
+    });
+
+    if (response.status === 200) {
+      return 'sucesso';
+    } else {
+      return 'erro';
+    }
+  } catch (error) {
+    console.log(error);
+    return 'erro';
   }
 }
 
