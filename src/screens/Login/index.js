@@ -8,7 +8,19 @@ import AuthContext from '../../components/AuthContext';
 export default function Login({ route }) {
   const [emailUsuario, setEmailUsuario] = useState('');
   const [senhaUsuario, setSenhaUsuario] = useState('');
-  const { setIsLoggedIn, setUserIdPlano, setUserToken } = useContext(AuthContext);
+  const { setIsLoggedIn, 
+    setUserIdPlano, 
+    setUserToken, 
+    setNomeUsuario, 
+    setEmailUsu, 
+    setUsuarioId,
+    setUserSenha,
+    setConfirmarSenhaUsuario,
+    setDataUsuario,
+    setTelefoneUsuario,
+    setPlanoMensalUsuario,
+    setPlanoAnualUsuario
+  } = useContext(AuthContext);
   const navigation = useNavigation();
   let token = '';
   let response = {};
@@ -32,7 +44,17 @@ export default function Login({ route }) {
 
   async function procuraUsuario() {
     const resposta = await buscaUsuarioEmail(emailUsuario);
+    setUsuarioId(resposta.id);
+    setNomeUsuario(resposta.nome);
+    setEmailUsu(resposta.email);
+    setUserSenha(resposta.senha);
+    setConfirmarSenhaUsuario(resposta.confirmarSenha);
+    setDataUsuario(resposta.data)
+    setTelefoneUsuario(resposta.telefone)
     setUserIdPlano(resposta.plano.id);
+    setTipoPlanoUsuario(resposta.plano.tipoPlano);
+    setPlanoMensalUsuario(resposta.plano.planoMensal);
+    setPlanoAnualUsuario(resposta.plano.planoAnual)
     return resposta;
   }
 

@@ -76,12 +76,14 @@ export async function salvarToken(token) {
 export async function buscaUsuarioEmail(emailUsuario) {
   try {
     const token = await obterToken();
+    console.log("shimbalaie " + emailUsuario)
     if (token) {
       const response = await api.get(`/usuarios/email?email=${emailUsuario}`, {
         headers: {
           Authorization: `Bearer ${token}`
         }
       });
+      console.log(response.data.nome)
       return response.data;
     } else {
       console.log('Token não encontrado.');
