@@ -16,6 +16,11 @@ export function AuthProvider({ children }) {
   const [tipoPlanoUsuario, setTipoPlanoUsuario] = useState('');
   const [planoMensalUsuario, setPlanoMensalUsuario] = useState('');
   const [planoAnualUsuario, setPlanoAnualUsuario] = useState('');
+  const [idDoCartao, setIdDoCartao] = useState('');
+  const [nomeNoCartao, setNomeNoCartao] = useState('');
+  const [numeroDoCartao, setNumeroDoCartao] = useState('');
+  const [validadeDoCartao, setValidadeDoCartao] = useState('');
+  const [codigoDoCartao, setCodigoDoCartao] = useState('');
 
   return (
     <AuthContext.Provider value={{ 
@@ -44,7 +49,17 @@ export function AuthProvider({ children }) {
       planoMensalUsuario,
       setPlanoMensalUsuario,
       planoAnualUsuario,
-      setPlanoAnualUsuario
+      setPlanoAnualUsuario,
+      idDoCartao,
+      setIdDoCartao,
+      nomeNoCartao,
+      setNomeNoCartao,
+      numeroDoCartao,
+      setNumeroDoCartao,
+      validadeDoCartao,
+      setValidadeDoCartao,
+      codigoDoCartao,
+      setCodigoDoCartao
       }}>
       {children}
     </AuthContext.Provider>

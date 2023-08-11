@@ -4,20 +4,37 @@ import Texto from "../../components/Texto";
 import { alterarUsuario } from "../../services/requests/usuario"
 
 import AuthContext from "../../components/AuthContext"; // Importe o AuthContext
+import { useNavigation } from "@react-navigation/native";
 
 
-export default function EditarDados({ route, navigation }) {
-  const [nome, setNome] = useState(route.params.usuario);
-  const [email, setEmail] = useState(route.params.email);
-  const [telefone, setTelefone] = useState(route.params.telefone);
-  const [data, setData] = useState(route.params.data);
+export default function EditarDados() {
+  const { 
+    userSenha, 
+    usuarioId, 
+    nomeUsuario, 
+    emailUsu, 
+    telefoneUsuario, 
+    dataUsuario,
+    confirmarSenhaUsuario,
+    userIdPlano,
+    tipoPlanoUsuario,
+    planoMensalUsuario,
+    planoAnualUsuario,
+    setNomeUsuario,
+    setEmailUsu,
+    setDataUsuario,
+    setTelefoneUsuario
+   } = useContext(AuthContext);
+  const navigation = useNavigation();
+  const [nome, setNome] = useState(nomeUsuario);
+  const [email, setEmail] = useState(emailUsu);
+  const [telefone, setTelefone] = useState(telefoneUsuario);
+  const [data, setData] = useState(dataUsuario);
   const [confirmarSenha, setConfirmarSenha] = useState("");
-  const authContext = useContext(AuthContext);
-  const senha = authContext.userSenha;
+  const senha = userSenha
 
   async function alterar() {
-    console.log(authContext.usuarioId)
-    
+    console.log(userSenha)
     if (!nome || !email || !telefone || !data || !confirmarSenha) {
       Alert.alert("Erro", "Por favor, preencha todos os campos.");
       return;
@@ -41,17 +58,37 @@ export default function EditarDados({ route, navigation }) {
 
     // Restante do código para editar os dados
     const resultado = await alterarUsuario(
-      authContext.usuarioId,
+      usuarioId,
       nome,
       email,
-      route.params.usuario.senhaUsuario,
-      route.params.usuario.confirmarSenhaUsuario,
+      userSenha,
+      confirmarSenhaUsuario,
       data,
       telefone,
+      userIdPlano,
+      tipoPlanoUsuario,
+      planoMensalUsuario,
+      planoAnualUsuario
     );
 
     if (resultado === "sucesso") {
+      setNomeUsuario(nome);
+      setEmailUsu(email);
+      setTelefoneUsuario(telefone);
+      setDataUsuario(data);
       Alert.alert("Repositório atualizado!");
+      console.log(usuarioId,
+        nome,
+        email,
+        userSenha,
+        confirmarSenhaUsuario,
+        data,
+        telefone,
+        userIdPlano,
+        tipoPlanoUsuario,
+        planoMensalUsuario,
+        planoAnualUsuario,
+        nomeUsuario)
       navigation.goBack();
     } else {
       Alert.alert("Erro ao atualizar o repositório!");

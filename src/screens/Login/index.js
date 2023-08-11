@@ -47,7 +47,7 @@ export default function Login({ route }) {
     setUsuarioId(resposta.id);
     setNomeUsuario(resposta.nome);
     setEmailUsu(resposta.email);
-    setUserSenha(resposta.senha);
+    setUserSenha(senhaUsuario);
     setConfirmarSenhaUsuario(resposta.confirmarSenha);
     setDataUsuario(resposta.data)
     setTelefoneUsuario(resposta.telefone)
@@ -83,8 +83,7 @@ export default function Login({ route }) {
       // Restante do código para realizar o login
       // Navegue para a próxima tela ou realize a autenticação do usuário
       login();
-      const usuario = response.nome;
-      navigation.navigate('Chatbot', {usuario});
+      navigation.navigate('Chatbot');
     }
   }
 

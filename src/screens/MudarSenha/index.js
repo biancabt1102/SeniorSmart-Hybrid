@@ -1,9 +1,26 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { View, StyleSheet, TextInput, TouchableOpacity, Alert, ScrollView } from "react-native";
 import Texto from "../../components/Texto";
+import { alterarUsuario } from "../../services/requests/usuario"
+import { useNavigation } from "@react-navigation/native";
 
-export default function MudarSenha({ route, navigation }) {
-  const [senhaAtual, setSenhaAtual] = useState(route.params.usuario.senhaUsuario);
+import AuthContext from "../../components/AuthContext"; // Importe o AuthContext
+
+export default function MudarSenha() {
+  const { 
+    userSenha, 
+    usuarioId, 
+    nomeUsuario, 
+    emailUsu, 
+    telefoneUsuario, 
+    dataUsuario,
+    userIdPlano,
+    tipoPlanoUsuario,
+    planoMensalUsuario,
+    planoAnualUsuario
+   } = useContext(AuthContext);
+  const navigation = useNavigation();
+  const [senhaAtual, setSenhaAtual] = useState(userSenha);
   const [novaSenha, setNovaSenha] = useState("");
   const [confirmarSenha, setConfirmarSenha] = useState("");
 
@@ -13,7 +30,7 @@ export default function MudarSenha({ route, navigation }) {
       return false;
     }
 
-    if (senhaAtual !== route.params.usuario.senha) {
+    if (senhaAtual !== userSenha) {
       Alert.alert("Erro", "A senha atual está incorreta.");
       return false;
     }
@@ -29,13 +46,17 @@ export default function MudarSenha({ route, navigation }) {
   async function alterar() {
     if (validarCampos()) {
         const resultado = await alterarUsuario(
-            route.params.usuario.idUsuario,
-            route.params.usuario.nome,
-            route.params.usuario.email,
+            usuarioId,
+            nomeUsuario,
+            emailUsu,
             novaSenha,
             confirmarSenha,
-            route.params.usuario.data,
-            route.params.usuario.telefone,
+            dataUsuario,
+            telefoneUsuario,
+            userIdPlano,
+            tipoPlanoUsuario,
+            planoMensalUsuario,
+            planoAnualUsuario
         );
     
         if (resultado === "sucesso") {

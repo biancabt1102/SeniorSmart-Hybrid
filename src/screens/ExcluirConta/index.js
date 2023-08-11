@@ -6,15 +6,14 @@ import { deletarUsuario } from "../../services/requests/usuario";
 import AuthContext from "../../components/AuthContext"; // Importe o AuthContext
 
 export default function ExcluirConta({ route, navigation }) {
-  const authContext = useContext(AuthContext);
-  const { setIsLoggedIn } = useContext(AuthContext);
-  const senha = authContext.userSenha;
+  const { userSenha, usuarioId } = useContext(AuthContext);
+  const senha = userSenha;
   const [confirmarSenha, setConfirmarSenha] = useState("");
   
 
   function deletar() {
     if (confirmarSenha === senha) {
-      const resultado = deletarUsuario(route.params.usuario.idUsuario);
+      const resultado = deletarUsuario(usuarioId);
 
       if (resultado === "sucesso") {
         Alert.alert("Conta excluída com sucesso!");

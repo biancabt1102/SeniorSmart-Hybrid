@@ -1,32 +1,12 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useContext } from "react";
 import Texto from "../../components/Texto";
 import { StyleSheet, TouchableOpacity, View, Alert } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { buscaUsuarioPorIdPlano } from "../../services/requests/usuario";
 import AuthContext from '../../components/AuthContext';
 
 export default function Perfil() {
-  const [usuario, setUsuario] = useState({});
-  const { userIdPlano } = useContext(AuthContext);
+  const { nomeUsuario, emailUsu, telefoneUsuario, dataUsuario } = useContext(AuthContext);
   const navigation = useNavigation();
-
-  async function busca() {
-    try {
-      const resultado = await buscaUsuarioPorIdPlano(userIdPlano);
-      if (resultado != null) {
-        setUsuario(resultado);
-      } else {
-        Alert.alert('Usuario não encontrado');
-      }
-    } catch (error) {
-      console.log(error);
-      Alert.alert('Erro ao buscar usuário');
-    }
-  }
-
-  useEffect(() => {
-    busca();
-  }, []);
 
   return (
     <>
@@ -34,49 +14,43 @@ export default function Perfil() {
       <View style={estilos.conteiner}>
         <View style={estilos.informacoes}>
           <Texto style={estilos.tituloInfo}>Nome:</Texto>
-          <Texto style={estilos.conteudo}>{usuario.nome}</Texto>
+          <Texto style={estilos.conteudo}>{nomeUsuario}</Texto>
         </View>
         <View style={estilos.informacoes}>
           <Texto style={estilos.tituloInfo}>E-mail:</Texto>
-          <Texto style={estilos.conteudo}>{usuario.email}</Texto>
+          <Texto style={estilos.conteudo}>{emailUsu}</Texto>
         </View>
         <View style={estilos.informacoes}>
           <Texto style={estilos.tituloInfo}>Telefone:</Texto>
-          <Texto style={estilos.conteudo}>{usuario.telefone}</Texto>
+          <Texto style={estilos.conteudo}>{telefoneUsuario}</Texto>
         </View>
         <View style={estilos.informacoes}>
           <Texto style={estilos.tituloInfo}>Data de nascimento:</Texto>
-          <Texto style={estilos.conteudo}>{usuario.data}</Texto>
+          <Texto style={estilos.conteudo}>{dataUsuario}</Texto>
         </View>
       </View>
       <TouchableOpacity
-        onPress={() => navigation.navigate("Modelo", { 
-            screen: 'EditarDados', 
-            usuario: usuario.nome,
-            email: usuario.email,
-            telefone: usuario.telefone,
-            data: usuario.data
-          })}
+        onPress={() => navigation.navigate("Modelo", { screen: 'EditarDados' })}
         style={estilos.botoes}>
         <Texto style={estilos.textos}>Editar dados</Texto>
       </TouchableOpacity>
       <TouchableOpacity
-        onPress={() => navigation.navigate("Modelo", { screen: 'EditarCartao', senha: usuario.senha })}
+        onPress={() => navigation.navigate("Modelo", { screen: 'EditarCartao' })}
         style={estilos.botoes}>
         <Texto style={estilos.textos}>Editar cartão</Texto>
       </TouchableOpacity>
       <TouchableOpacity
-        onPress={() => navigation.navigate("Modelo", { screen: 'MudarSenha', usuario: usuario })}
+        onPress={() => navigation.navigate("Modelo", { screen: 'MudarSenha' })}
         style={estilos.botoes}>
         <Texto style={estilos.textos}>Mudar senha</Texto>
       </TouchableOpacity>
       <TouchableOpacity
-        onPress={() => navigation.navigate("Modelo", { screen: 'ExcluirConta', usuario: usuario })}
+        onPress={() => navigation.navigate("Modelo", { screen: 'ExcluirConta' })}
         style={estilos.botoes}>
         <Texto style={estilos.textos}>Excluir conta</Texto>
       </TouchableOpacity>
       <TouchableOpacity
-        onPress={() => navigation.navigate("Modelo", { screen: 'SairConta', usuario: usuario })}
+        onPress={() => navigation.navigate("Modelo", { screen: 'SairConta' })}
         style={estilos.botoes}>
         <Texto style={estilos.textos}>Sair da conta</Texto>
       </TouchableOpacity>

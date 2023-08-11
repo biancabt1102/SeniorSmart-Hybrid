@@ -1,20 +1,52 @@
-import React, { useContext, useState } from "react";
-import { View, StyleSheet, TextInput, Alert, ScrollView } from "react-native";
+import React, { useContext, useEffect, useState } from "react";
+import { View, StyleSheet, TextInput, Alert, ScrollView, TouchableOpacity } from "react-native";
 import Texto from "../../components/Texto";
-import { TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import AuthContext from "../../components/AuthContext"; // Importe o AuthContext
+import AuthContext from "../../components/AuthContext";
+import { editarPagamento } from "../../services/requests/pagamento";
+import { buscaPagamentoPlano } from "../../services/requests/pagamento"; // Certifique-se de importar a função correta para buscar o usuário por email
 
+export default function EditarCartao() {
+  const {
+    userIdPlano,
+    setIdDoCartao,
+    setNomeNoCartao,
+    setNumeroDoCartao,
+    setValidadeDoCartao,
+    setCodigoDoCartao,
+    nomeNoCartao,
+    numeroDoCartao,
+    validadeDoCartao,
+    codigoDoCartao,
+    userSenha,
+    idDoCartao,
+    tipoPlanoUsuario,
+    planoMensalUsuario,
+    planoAnualUsuario,
+  } = useContext(AuthContext);
 
-export default function EditarCartao({ route }) {
-  const [Titular, setTitular] = useState("");
-  const [numero, setNumero] = useState("");
-  const [validade, setValidade] = useState("");
-  const [cvv, setCvv] = useState("");
+  const [Titular, setTitular] = useState(nomeNoCartao);
+  const [numero, setNumero] = useState(numeroDoCartao);
+  const [validade, setValidade] = useState(validadeDoCartao);
+  const [cvv, setCvv] = useState(codigoDoCartao);
   const [confirmarSenha, setConfirmarSenha] = useState("");
-  const authContext = useContext(AuthContext);
-  const senha = authContext.userSenha;
+  const senha = userSenha;
   const navigation = useNavigation();
+
+  useEffect(() => {
+    procurarPagamento();
+  }, []);
+
+  async function procurarPagamento() {
+    const resposta = await buscaPagamentoPlano(userIdPlano); // Substitua pela função correta para buscar o usuário por email
+    console.log("linguiça" + resposta.id)
+    setIdDoCartao(resposta.id);
+    setNomeNoCartao(resposta.nomeNoCartao);
+    setNumeroDoCartao(resposta.numeroDoCartao);
+    setValidadeDoCartao(resposta.validadeDoCartao);
+    setCodigoDoCartao(resposta.codigoDoCartao);
+    return resposta;
+  }
 
   function validarCampos() {
     if (
@@ -37,8 +69,8 @@ export default function EditarCartao({ route }) {
       return false;
     }
 
-    if (!validade.match(/^\d{2}\/\d{2}$/)) {
-      Alert.alert("Erro", "Por favor, digite uma data de validade válida (MM/AA).");
+    if (!validade.match(/^\d{4}-\d{2}-\d{2}$/)) {
+      Alert.alert("Erro", "Por favor, digite uma data de validade válida (YYYY-MM-DD).");
       return false;
     }
 
@@ -57,16 +89,25 @@ export default function EditarCartao({ route }) {
     }
 
     if (validarCampos()) {
-      // Restante do código para editar o cartão
-      const resultado = await editarCartao(
-        authContext.usuarioId,
+    resposta = procurarPagamento();
+      console.log(resposta)
+      const resultado = await editarPagamento(
+        idDoCartao,
         Titular,
         numero,
         validade,
-        cvv
+        cvv,
+        userIdPlano,
+        tipoPlanoUsuario,
+        planoMensalUsuario,
+        planoAnualUsuario
       );
 
       if (resultado === "sucesso") {
+        setNomeNoCartao(Titular);
+        setNumeroDoCartao(numero);
+        setValidadeDoCartao(validade);
+        setCodigoDoCartao(cvv);
         Alert.alert("Sucesso", "Cartão editado com sucesso!");
         navigation.goBack();
       } else {
@@ -77,25 +118,22 @@ export default function EditarCartao({ route }) {
 
   function formatarNumeroCartao(input) {
     const value = input.replace(/\D/g, ""); // Remove todos os caracteres não numéricos
-
-    // Formate o número do cartão com espaços a cada 4 dígitos
     let formattedNumber = value.replace(/\B(?=(\d{4})+(?!\d))/g, " ");
-
     setNumero(formattedNumber);
   }
 
   function formatarValidade(input) {
     const value = input.replace(/\D/g, ""); // Remove todos os caracteres não numéricos
 
-    if (value.length > 4) {
-      // Limita o campo da validade em 4 caracteres (MM/AA)
-      value = value.slice(0, 4);
+    if (value.length > 8) {
+      // Limita o campo da validade em 8 caracteres (YYYY-MM-DD)
+      value = value.slice(0, 8);
     }
 
     let formattedValidade = value;
-    if (value.length >= 3) {
-      // Adiciona a barra ("/") automaticamente após 2 caracteres
-      formattedValidade = `${value.slice(0, 2)}/${value.slice(2, 4)}`;
+    if (value.length >= 6) {
+      // Adiciona hífens ("-") automaticamente após 4 e 6 caracteres
+      formattedValidade = `${value.slice(0, 4)}-${value.slice(4, 6)}-${value.slice(6)}`;
     }
 
     setValidade(formattedValidade);
@@ -103,10 +141,7 @@ export default function EditarCartao({ route }) {
 
   function formatarCVV(input) {
     const value = input.replace(/\D/g, ""); // Remove todos os caracteres não numéricos
-
-    // Limita o campo do CVV em 3 dígitos
-    let formattedCVV = value.slice(0, 3);
-
+    let formattedCVV = value.slice(0, 3); // Limita o campo do CVV em 3 dígitos
     setCvv(formattedCVV);
   }
 
@@ -140,13 +175,13 @@ export default function EditarCartao({ route }) {
         <View style={estilos.informacoes}>
           <Texto style={estilos.tituloInfo}>Validade: </Texto>
           <TextInput
-            placeholder="(MM/AA)"
+            placeholder="YYYY-MM-DD"
             autoCapitalize="none"
             style={estilos.conteudo}
             value={validade}
             onChangeText={formatarValidade}
-            keyboardType="phone-pad"
-            maxLength={5}
+            keyboardType="numeric"
+            maxLength={10}
             multiline
           />
           <Texto style={estilos.tituloInfo}>CVV: </Texto>
@@ -225,7 +260,7 @@ const estilos = StyleSheet.create({
     fontWeight: "400",
     color: "#483E3E",
     maxWidth: '65%',
-    maxHeight: 100
+    maxHeight: 100,
   },
   botoes: {
     backgroundColor: "#867070",

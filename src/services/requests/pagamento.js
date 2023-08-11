@@ -40,11 +40,7 @@ export async function cadastrarPagamento(
       }
     };
 
-    const response = await api.post('/pagamentos/cadastro', requestBody, {
-      headers: {
-        Authorization: `Bearer ${await obterToken()}`
-      }
-    });
+    const response = await api.post('/pagamentos/cadastro', requestBody);
 
     if (response.status === 200 || response.status === 201) {
       return 'sucesso';
@@ -58,8 +54,9 @@ export async function cadastrarPagamento(
 }
 
 export async function buscaPagamentoPlano(idPlano) {
+  console.log("CHURROS" + idPlano)
   try {
-    const response = await api.get(`/api/pagamentos/buscarPorPlano/${idPlano}`, {
+    const response = await api.get(`/pagamentos/buscarPorPlano/${idPlano}`, {
       headers: {
         Authorization: `Bearer ${await obterToken()}`
       }
@@ -71,7 +68,7 @@ export async function buscaPagamentoPlano(idPlano) {
   }
 }
 
-export async function editarCartao(
+export async function editarPagamento(
   idUsuario,
   nomeCartao,
   numeroCartao,
