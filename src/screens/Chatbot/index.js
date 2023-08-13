@@ -1,16 +1,26 @@
 import React, { useState, useRef, useEffect, useContext } from 'react';
-import { View, Text, TextInput, TouchableOpacity, FlatList, StyleSheet, Image, Modal, Alert, AsyncStorage } from 'react-native';
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  FlatList,
+  StyleSheet,
+  Image,
+  Modal,
+  Alert,
+  AsyncStorage,
+} from 'react-native';
 import axios from 'axios';
 import Tts from 'react-native-tts';
 import Contacts from 'react-native-contacts';
 import Header from '../../components/Header';
-import enviar from "../../assets/enviar.png"
+import enviar from '../../assets/enviar.png';
 import DeviceInfo from 'react-native-device-info';
 import AuthContext from '../../components/AuthContext';
 
 import { criarPergunta } from '../../services/requests/pergunta';
 import { criarResposta } from '../../services/requests/resposta';
-
 
 function Chatbot() {
   const [message, setMessage] = useState('');
@@ -21,13 +31,12 @@ function Chatbot() {
   const flatListRef = useRef(null); // Referência ao componente FlatList
   // Obter o modelo do dispositivo
   const deviceModel = DeviceInfo.getModel();
-  const { nomeUsuario } = useContext(AuthContext); 
-
+  const { nomeUsuario } = useContext(AuthContext);
 
   useEffect(() => {
     Tts.setDefaultLanguage('pt-BR');
     Tts.addEventListener('tts-finish', handleTtsFinish);
-  
+
     // Carrega as mensagens anteriores do AsyncStorage
     AsyncStorage.getItem('chatMessages')
       .then((messagesData) => {
@@ -39,12 +48,11 @@ function Chatbot() {
       .catch((error) => {
         console.error('Erro ao carregar mensagens:', error);
       });
-  
+
     return () => {
       Tts.removeEventListener('tts-finish', handleTtsFinish);
     };
   }, []);
-  
 
   const handleTtsFinish = () => {
     // Callback chamado quando a fala é concluída
@@ -71,28 +79,34 @@ function Chatbot() {
     AsyncStorage.setItem('chatMessages', JSON.stringify(newMessages)) // Salva as mensagens atualizadas
       .catch((error) => {
         console.error('Erro ao salvar mensagens:', error);
-    });
+      });
 
     if (message.toLowerCase() === 'salvar contato') {
       setSalvandoContato(true);
       return;
     }
 
-    // Chamada à API do GPT
     try {
-      const response = await axios.post('https://api.openai.com/v1/chat/completions', {
-        model: 'gpt-3.5-turbo',
-        messages: [
-          { role: 'system', content: `Seu nome é Sexta-feira e você trabalha para a Seniorsmart ajudando idosos. Você é um assistente útil. Explique as coisas de um modo fácil pois está falando com um idoso, o nome da pessoa é ${nomeUsuario}. Modelo do meu celular é o ${deviceModel}.` },
-          { role: 'user', content: message },
-        ],
-        max_tokens: 4000, // Substitua pelo número adequado de tokens de resposta
-      }, {
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer <Sua chave da OpenAi aqui>', // Substitua pela sua chave de API do OpenAI
+      const response = await axios.post(
+        'https://api.openai.com/v1/chat/completions',
+        {
+          model: 'gpt-3.5-turbo',
+          messages: [
+            {
+              role: 'system',
+              content: `Seu nome é Sexta-feira e você trabalha para a Seniorsmart ajudando idosos. Você é um assistente útil. Explique as coisas de um modo fácil pois está falando com um idoso, o nome da pessoa é ${nomeUsuario}. Modelo do meu celular é o ${deviceModel}.`,
+            },
+            { role: 'user', content: message },
+          ],
+          max_tokens: 4000, // Substitua pelo número adequado de tokens de resposta
         },
-      });
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer <CHAVE DA OPENAI>', // Substitua pela sua chave de API do OpenAI
+          },
+        }
+      );
 
       if (response.status === 200) {
         const gptResponse = {
@@ -100,21 +114,29 @@ function Chatbot() {
           content: response.data.choices[0].message.content.trim(),
           isUser: false,
         };
-        setMessages((prevMessages) => [...prevMessages, gptResponse]);
+
+        const updatedMessages = [...newMessages, gptResponse];
+
+        setMessages(updatedMessages);
+
+        // Salva as mensagens atualizadas no AsyncStorage (incluindo a nova resposta)
+        AsyncStorage.setItem('chatMessages', JSON.stringify(updatedMessages)).catch((error) => {
+          console.error('Erro ao salvar mensagens:', error);
+        });
+
         speakText(gptResponse.content);
-        
+
         const idPergunta = await criarPergunta(message);
         if (idPergunta) {
-          console.log(gptResponse.content, idPergunta, message);
           const statusResposta = await criarResposta(gptResponse.content, idPergunta, message); // Salvar a resposta
           if (statusResposta === 'sucesso') {
-              console.log('Pergunta e resposta salvas com sucesso!');
+            console.log('Pergunta e resposta salvas com sucesso!');
           } else {
-              console.log('Erro ao salvar a resposta');
+            console.log('Erro ao salvar a resposta');
           }
-      } else {
+        } else {
           console.log('Erro ao salvar a pergunta');
-      }
+        }
       } else {
         console.error('Erro ao chamar a API do GPT');
       }
@@ -137,14 +159,18 @@ function Chatbot() {
 
   const renderMensagem = ({ item }) => {
     const mensagemContainerStyle = item.isUser ? estilos.mensagemUsuario : estilos.mensagemChatbot;
-    const mensagemAutorStyle = item.isUser ? estilos.mensagemAutorUsuario : estilos.mensagemAutorChatbot;
-    const mensagemTextStyle = item.isUser ? estilos.mensagemTextUsuario : estilos.mensagemTextChatbot;
+    const mensagemAutorStyle = item.isUser
+      ? estilos.mensagemAutorUsuario
+      : estilos.mensagemAutorChatbot;
+    const mensagemTextStyle = item.isUser
+      ? estilos.mensagemTextUsuario
+      : estilos.mensagemTextChatbot;
 
     return (
       <View style={[estilos.mensagemContainer, mensagemContainerStyle]}>
         <Text style={[estilos.mensagemContent, mensagemTextStyle]}>{item.content}</Text>
         <Text style={[estilos.mensagemAutor, mensagemAutorStyle]}>
-          {item.isUser ? (nomeUsuario || 'você') : 'Sexta-feira'}
+          {item.isUser ? nomeUsuario || 'você' : 'Sexta-feira'}
         </Text>
       </View>
     );
@@ -176,7 +202,7 @@ function Chatbot() {
 
   return (
     <View style={estilos.container}>
-      <Header voltar={true}/>
+      <Header />
       <FlatList
         ref={flatListRef} // Adiciona a referência ao componente FlatList
         data={messages}
@@ -192,7 +218,7 @@ function Chatbot() {
           onChangeText={setMessage}
         />
         <TouchableOpacity style={estilos.botao} onPress={handleSendMessage}>
-          <Image source={enviar}/>
+          <Image source={enviar} />
         </TouchableOpacity>
       </View>
       <Modal visible={salvandoContato} animationType="slide">
@@ -251,7 +277,7 @@ const estilos = StyleSheet.create({
     fontSize: 15,
     lineHeight: 18,
     fontWeight: '400',
-    textAlign: 'justify'
+    textAlign: 'justify',
   },
   mensagemTextUsuario: {
     color: '#FFFFFF',
@@ -262,7 +288,7 @@ const estilos = StyleSheet.create({
   mensagemAutor: {
     fontWeight: '400',
     fontSize: 15,
-    lineHeight: 18
+    lineHeight: 18,
   },
   mensagemAutorUsuario: {
     alignSelf: 'flex-end',
@@ -289,7 +315,7 @@ const estilos = StyleSheet.create({
   },
   botao: {
     marginTop: 8,
-    marginRight: 10
+    marginRight: 10,
   },
   modalContainer: {
     flex: 1,

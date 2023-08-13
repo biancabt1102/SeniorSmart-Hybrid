@@ -3,25 +3,24 @@ import { View, StyleSheet, TextInput, TouchableOpacity, Alert, ScrollView } from
 import Texto from "../../components/Texto";
 import { deletarUsuario } from "../../services/requests/usuario";
 
-import AuthContext from "../../components/AuthContext"; // Importe o AuthContext
 
-export default function ExcluirConta({ route, navigation }) {
-  const { userSenha, usuarioId } = useContext(AuthContext);
+import AuthContext from "../../components/AuthContext"; // Importe o AuthContext
+import { useNavigation } from "@react-navigation/native";
+
+export default function ExcluirConta() {
+  const navigation = useNavigation();
+  const { userSenha, usuarioId, setIsLoggedIn} = useContext(AuthContext);
   const senha = userSenha;
   const [confirmarSenha, setConfirmarSenha] = useState("");
+  
   
 
   function deletar() {
     if (confirmarSenha === senha) {
       const resultado = deletarUsuario(usuarioId);
-
-      if (resultado === "sucesso") {
-        Alert.alert("Conta excluída com sucesso!");
-        setIsLoggedIn(false);
-        navigation.navigate('Home');
-      } else {
-        Alert.alert("Erro ao excluir a conta!");
-      }
+      setIsLoggedIn(false);
+      Alert.alert("Conta excluída com sucesso!");
+      navigation.navigate('Home');
     } else {
       Alert.alert("Senha incorreta. Por favor, tente novamente.");
     }
@@ -40,6 +39,7 @@ export default function ExcluirConta({ route, navigation }) {
             value={confirmarSenha}
             onChangeText={setConfirmarSenha}
             secureTextEntry={true}
+            placeholderTextColor="#000000"
           />
         </View>
       </View>
@@ -91,7 +91,7 @@ const estilos = StyleSheet.create({
     fontSize: 16,
     lineHeight: 20,
     fontWeight: "400",
-    color: "#483E3E",
+    color: "#000000",
     maxWidth: "65%",
     maxHeight: 100,
   },

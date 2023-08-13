@@ -156,6 +156,7 @@ export default function EditarDados() {
             value={nome}
             onChangeText={setNome}
             multiline
+            placeholderTextColor="#000000"
           />
         </View>
         <View style={estilos.informacoes}>
@@ -167,6 +168,7 @@ export default function EditarDados() {
             value={email}
             onChangeText={setEmail}
             multiline
+            placeholderTextColor="#000000"
           />
         </View>
         <View style={estilos.informacoes}>
@@ -179,6 +181,7 @@ export default function EditarDados() {
             onChangeText={formatarTelefone}
             keyboardType="phone-pad"
             multiline
+            placeholderTextColor="#000000"
           />
         </View>
         <View style={estilos.informacoes}>
@@ -191,6 +194,7 @@ export default function EditarDados() {
             onChangeText={formatarData}
             keyboardType="numeric"
             multiline
+            placeholderTextColor="#000000"
           />
         </View>
       </View>
@@ -204,6 +208,7 @@ export default function EditarDados() {
             value={confirmarSenha}
             onChangeText={setConfirmarSenha}
             secureTextEntry
+            placeholderTextColor="#000000"
           />
         </View>
       </View>
@@ -255,7 +260,7 @@ const estilos = StyleSheet.create({
     fontSize: 16,
     lineHeight: 20,
     fontWeight: "400",
-    color: "#483E3E",
+    color: "#000000",
     maxWidth: '65%',
     maxHeight: 100
   },

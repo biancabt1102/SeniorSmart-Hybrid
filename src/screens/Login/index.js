@@ -1,11 +1,11 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Text, TextInput, TouchableOpacity, View, StyleSheet, Alert } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, CommonActions } from "@react-navigation/native";
 import { buscaUsuarioEmail, loginUsuario } from "../../services/requests/usuario";
 import AuthContext from '../../components/AuthContext';
 
 
-export default function Login({ route }) {
+export default function Login() {
   const [emailUsuario, setEmailUsuario] = useState('');
   const [senhaUsuario, setSenhaUsuario] = useState('');
   const { setIsLoggedIn, 
@@ -19,11 +19,18 @@ export default function Login({ route }) {
     setDataUsuario,
     setTelefoneUsuario,
     setPlanoMensalUsuario,
-    setPlanoAnualUsuario
+    setPlanoAnualUsuario, 
+    isLoggedIn
   } = useContext(AuthContext);
   const navigation = useNavigation();
   let token = '';
   let response = {};
+
+  useEffect(() => {
+    if(isLoggedIn) {
+        navigation.navigate('Chatbot')
+    }
+}, []);
 
   async function login(){
     token = await loginUsuario(
@@ -34,7 +41,7 @@ export default function Login({ route }) {
     if (token != null) {
       Alert.alert('Sucesso', 'Login realizado com sucesso!');
       setIsLoggedIn(true);
-      response = procuraUsuario();
+      response = await procuraUsuario();
       setUserToken(token);
     } else {
       Alert.alert('Erro ao Fazer Login!');
@@ -83,7 +90,12 @@ export default function Login({ route }) {
       // Restante do código para realizar o login
       // Navegue para a próxima tela ou realize a autenticação do usuário
       login();
-      navigation.navigate('Chatbot');
+      navigation.dispatch(
+        CommonActions.reset({
+          index: 0,
+          routes: [{ name: 'Chatbot' }],
+        })
+      );
     }
   }
 
@@ -97,6 +109,7 @@ export default function Login({ route }) {
           style={styles.campos}
           value={emailUsuario}
           onChangeText={setEmailUsuario}
+          placeholderTextColor="#000000"
         />
         <TextInput
           placeholder="Senha"
@@ -105,6 +118,7 @@ export default function Login({ route }) {
           value={senhaUsuario}
           onChangeText={setSenhaUsuario}
           secureTextEntry  // Exibe a senha como formato de senha
+          placeholderTextColor="#000000"
         />
       </View>
       <TouchableOpacity style={styles.botao} onPress={handleLogin}>
@@ -136,7 +150,7 @@ const styles = StyleSheet.create({
   campos: {
     fontSize: 16,
     fontWeight: "400",
-    color: "#A6AEB3",
+    color: "#000000",
     borderBottomWidth: 1,
     borderBottomColor: "#867070",
   },

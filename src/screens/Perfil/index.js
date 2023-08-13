@@ -95,7 +95,7 @@ const estilos = StyleSheet.create({
     fontSize: 16,
     lineHeight: 20,
     fontWeight: '400',
-    color: '#483E3E'
+    color: '#000000'
   },
   botoes: {
     backgroundColor: "#867070",

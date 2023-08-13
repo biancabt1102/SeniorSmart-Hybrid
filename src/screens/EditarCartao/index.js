@@ -158,6 +158,7 @@ export default function EditarCartao() {
             value={Titular}
             onChangeText={setTitular}
             multiline
+            placeholderTextColor="#000000"
           />
         </View>
         <View style={estilos.informacoes}>
@@ -170,6 +171,7 @@ export default function EditarCartao() {
             keyboardType="numeric"
             maxLength={19}
             onChangeText={formatarNumeroCartao}
+            placeholderTextColor="#000000"
           />
         </View>
         <View style={estilos.informacoes}>
@@ -183,6 +185,7 @@ export default function EditarCartao() {
             keyboardType="numeric"
             maxLength={10}
             multiline
+            placeholderTextColor="#000000"
           />
           <Texto style={estilos.tituloInfo}>CVV: </Texto>
           <TextInput
@@ -194,6 +197,7 @@ export default function EditarCartao() {
             keyboardType="numeric"
             maxLength={3}
             multiline
+            placeholderTextColor="#000000"
           />
         </View>
       </View>
@@ -207,6 +211,7 @@ export default function EditarCartao() {
             value={confirmarSenha}
             onChangeText={setConfirmarSenha}
             secureTextEntry
+            placeholderTextColor="#000000"
           />
         </View>
       </View>
@@ -258,7 +263,7 @@ const estilos = StyleSheet.create({
     fontSize: 16,
     lineHeight: 20,
     fontWeight: "400",
-    color: "#483E3E",
+    color: "#000000",
     maxWidth: '65%',
     maxHeight: 100,
   },

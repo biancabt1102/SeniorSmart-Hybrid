@@ -129,6 +129,7 @@ export default function Cadastro() {
           style={estilos.campos}
           value={nomeUsuario}
           onChangeText={setNomeUsuario}
+          placeholderTextColor="#000000"
         />
         <TextInput
           placeholder="E-mail"
@@ -136,6 +137,7 @@ export default function Cadastro() {
           style={estilos.campos}
           value={emailUsuario}
           onChangeText={setEmailUsuario}
+          placeholderTextColor="#000000"
         />
         <TextInput
           placeholder="Senha"
@@ -144,6 +146,7 @@ export default function Cadastro() {
           secureTextEntry
           value={senhaUsuario}
           onChangeText={setSenhaUsuario}
+          placeholderTextColor="#000000"
         />
         <TextInput
           placeholder="Confirmar a senha"
@@ -152,6 +155,7 @@ export default function Cadastro() {
           secureTextEntry
           value={confirmarSenhaUsuario}
           onChangeText={setConfirmarSenhaUsuario}
+          placeholderTextColor="#000000"
         />
         <TextInput
           placeholder="Nascimento (ano-mês-dia)"
@@ -160,6 +164,7 @@ export default function Cadastro() {
           value={nascimentoUsuario}
           keyboardType='numeric'
           onChangeText={formatarData}
+          placeholderTextColor="#000000"
         />
         <TextInput
           placeholder="Telefone (11 12345-6789)"
@@ -168,6 +173,7 @@ export default function Cadastro() {
           keyboardType='numeric'
           value={telefoneUsuario}
           onChangeText={formatarTelefone}
+          placeholderTextColor="#000000"
         />
       </View>
       <TouchableOpacity style={estilos.botao} onPress={handleCadastro}>
@@ -187,7 +193,7 @@ const estilos = StyleSheet.create({
   campos: {
     fontSize: 16,
     fontWeight: "400",
-    color: "#A6AEB3",
+    color: "#000000",
     borderBottomWidth: 1,
     borderBottomColor: "#867070",
   },

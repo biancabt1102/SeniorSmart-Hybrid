@@ -80,6 +80,7 @@ export default function MudarSenha() {
             value={senhaAtual}
             onChangeText={setSenhaAtual}
             secureTextEntry
+            placeholderTextColor="#000000"
           />
         </View>
         <View style={estilos.informacoes}>
@@ -90,6 +91,7 @@ export default function MudarSenha() {
             value={novaSenha}
             onChangeText={setNovaSenha}
             secureTextEntry
+            placeholderTextColor="#000000"
           />
         </View>
         <View style={estilos.informacoes}>
@@ -100,6 +102,7 @@ export default function MudarSenha() {
             value={confirmarSenha}
             onChangeText={setConfirmarSenha}
             secureTextEntry
+            placeholderTextColor="#000000"
           />
         </View>
       </View>
@@ -151,7 +154,7 @@ const estilos = StyleSheet.create({
     fontSize: 16,
     lineHeight: 20,
     fontWeight: "400",
-    color: "#483E3E",
+    color: "#000000",
     maxWidth: '50%',
     maxHeight: 100
   },

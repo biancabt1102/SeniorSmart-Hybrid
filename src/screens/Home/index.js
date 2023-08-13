@@ -1,13 +1,21 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { TouchableOpacity, ScrollView, View, StyleSheet } from "react-native";
 import Header from "../../components/Header";
 import Texto from "../../components/Texto";
 import BemVindo from "../../components/BemVindo";
 import { useNavigation } from "@react-navigation/native";
+import AuthContext from '../../components/AuthContext';
 
 
 export default function Home({ conteudo = null, continuacao = true}) {
     const navigation = useNavigation();
+    const { isLoggedIn } = useContext(AuthContext);
+
+    useEffect(() => {
+        if(isLoggedIn) {
+            navigation.navigate('Chatbot')
+        }
+    }, []);
 
     return <ScrollView>
         <Header/>
