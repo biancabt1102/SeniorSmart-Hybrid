@@ -18,6 +18,8 @@ import Header from '../../components/Header';
 import enviar from '../../assets/enviar.png';
 import DeviceInfo from 'react-native-device-info';
 import AuthContext from '../../components/AuthContext';
+import { PermissionsAndroid } from 'react-native';
+
 
 import { criarPergunta } from '../../services/requests/pergunta';
 import { criarResposta } from '../../services/requests/resposta';
@@ -103,7 +105,7 @@ function Chatbot() {
         {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: 'Bearer <CHAVE DA OPENAI>', // Substitua pela sua chave de API do OpenAI
+            Authorization: 'Bearer <Sua Chave>', // Substitua pela sua chave de API do OpenAI
           },
         }
       );
@@ -176,29 +178,55 @@ function Chatbot() {
     );
   };
 
-  const handleSalvarContato = () => {
-    const newContact = {
-      givenName: nomeContato,
-      phoneNumbers: [
-        {
-          label: 'mobile',
-          number: telefoneContato,
-        },
-      ],
-    };
-
-    Contacts.addContact(newContact, (err) => {
-      if (err) {
-        console.error('Erro ao salvar o contato:', err);
-        return;
+  const handleSalvarContato = async () => {
+    try {
+      const permissionGranted = await PermissionsAndroid.requestMultiple([
+        PermissionsAndroid.PERMISSIONS.READ_CONTACTS,
+        PermissionsAndroid.PERMISSIONS.WRITE_CONTACTS,
+      ]);
+  
+      if (
+        permissionGranted['android.permission.READ_CONTACTS'] === PermissionsAndroid.RESULTS.GRANTED &&
+        permissionGranted['android.permission.WRITE_CONTACTS'] === PermissionsAndroid.RESULTS.GRANTED
+      ) {
+        // As permissões foram concedidas, continue com o código para salvar o contato
+        const newContact = {
+          givenName: nomeContato, // Use o nomeContato como o first name
+          phoneNumbers: [
+            {
+              label: 'mobile',
+              number: telefoneContato,
+            },
+          ],
+        };
+  
+        await Contacts.openContactForm(newContact);
+        console.log('Contato salvo com sucesso!');
+        Alert.alert('Contato salvo', 'O contato foi salvo com sucesso!');
+        setTelefoneContato('');
+        setSalvandoContato(false);
+        setNomeContato(''); // Limpe o nome do contato somente após o sucesso
+  
+        // Adicione uma mensagem de sucesso à lista de mensagens
+        const contatoSalvoMessage = {
+          id: Math.random().toString(),
+          content: 'Seu contato foi salvo com sucesso =)',
+          isUser: false,
+        };
+  
+        setMessages((prevMessages) => [...prevMessages, contatoSalvoMessage]);
+      } else {
+        // As permissões foram negadas
+        Alert.alert('Permissões negadas', 'Você precisa conceder permissão para acessar e salvar contatos.');
       }
-
-      Alert.alert('Contato salvo', 'O contato foi salvo com sucesso!');
-      setNomeContato('');
-      setTelefoneContato('');
-      setSalvandoContato(false);
-    });
+    } catch (error) {
+      console.error('Erro ao salvar o contato:', error);
+      Alert.alert('Erro ao salvar o contato', 'Ocorreu um erro ao tentar salvar o contato.');
+    }
   };
+  
+  
+
 
   return (
     <View style={estilos.container}>
@@ -224,13 +252,6 @@ function Chatbot() {
       <Modal visible={salvandoContato} animationType="slide">
         <View style={estilos.modalContainer}>
           <Text style={estilos.modalTitulo}>Salvar Contato</Text>
-          <TextInput
-            placeholder="Nome do Contato"
-            autoCapitalize="words"
-            style={estilos.modalInput}
-            value={nomeContato}
-            onChangeText={setNomeContato}
-          />
           <TextInput
             placeholder="Telefone do Contato"
             keyboardType="phone-pad"
