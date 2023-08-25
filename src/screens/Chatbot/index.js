@@ -128,7 +128,7 @@ function Chatbot() {
         {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: 'Bearer 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', // Substitua pela sua chave de API do OpenAI
+            Authorization: 'Bearer <Chave da API do GPT>', // Substitua pela sua chave de API do OpenAI
           },
         }
       );
