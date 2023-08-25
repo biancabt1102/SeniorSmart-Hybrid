@@ -14,17 +14,20 @@ import {
 import axios from 'axios';
 import Tts from 'react-native-tts';
 import Contacts from 'react-native-contacts';
-import Header from '../../components/Header';
 import enviar from '../../assets/enviar.png';
 import DeviceInfo from 'react-native-device-info';
 import AuthContext from '../../components/AuthContext';
 import { PermissionsAndroid } from 'react-native';
-
+import configuration from "../../assets/config.png";
+import cabecinha from "../../assets/cabecinhaHeader.png"
 
 import { criarPergunta } from '../../services/requests/pergunta';
 import { criarResposta } from '../../services/requests/resposta';
+import Texto from '../../components/Texto';
+import { useNavigation } from '@react-navigation/native';
 
 function Chatbot() {
+  const navigation = useNavigation();
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState([]);
   const [salvandoContato, setSalvandoContato] = useState(false);
@@ -33,7 +36,27 @@ function Chatbot() {
   const flatListRef = useRef(null); // Referência ao componente FlatList
   // Obter o modelo do dispositivo
   const deviceModel = DeviceInfo.getModel();
-  const { nomeUsuario } = useContext(AuthContext);
+  const { nomeUsuario, isLoggedIn} = useContext(AuthContext);
+  const [configVisible, setConfigVisible] = useState(false);
+  const [vozVirtual, setVozVirtual] = useState(5000);
+  const [falaAtivada, setFalaAtivada] = useState(true);
+
+
+  let navegacao = ''
+
+    if (isLoggedIn === true) {
+      navegacao = () => navigation.navigate("Modelo", { screen: 'Perfil' });
+    } else {
+      navegacao = () => navigation.navigate("Invalido");
+    }
+
+  const toggleConfig = () => {
+    setConfigVisible(!configVisible);
+  }
+
+  const toggleFala = () => {
+    setFalaAtivada(!falaAtivada);
+  };
 
   useEffect(() => {
     Tts.setDefaultLanguage('pt-BR');
@@ -105,7 +128,7 @@ function Chatbot() {
         {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: 'Bearer <Sua Chave>', // Substitua pela sua chave de API do OpenAI
+            Authorization: 'Bearer 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', // Substitua pela sua chave de API do OpenAI
           },
         }
       );
@@ -151,11 +174,15 @@ function Chatbot() {
   };
 
   const speakText = (text) => {
-    const sentences = text.split('. '); // Divide o texto em frases individuais
+    if (!falaAtivada) {
+      return;
+    }
+    
+    const sentences = text.split('\n'); // Divide o texto em frases individuais
     sentences.forEach((sentence, index) => {
       setTimeout(() => {
         Tts.speak(sentence); // Fala cada frase individualmente
-      }, index * 5000); // Pausa de 5 segundos entre cada frase (4000 milissegundos)
+      }, index * vozVirtual); // Pausa de 5 segundos entre cada frase (4000 milissegundos)
     });
   };
 
@@ -224,13 +251,27 @@ function Chatbot() {
       Alert.alert('Erro ao salvar o contato', 'Ocorreu um erro ao tentar salvar o contato.');
     }
   };
-  
-  
+
+  const repeatLastMessage = () => {
+    const lastChatbotMessage = messages.slice().reverse().find(message => !message.isUser);
+    
+    if (lastChatbotMessage) {
+      Tts.speak(lastChatbotMessage.content);
+    }
+  };
 
 
   return (
     <View style={estilos.container}>
-      <Header />
+      <View style={estilos.header}>
+        <TouchableOpacity onPress={toggleConfig}>
+            <Image source={configuration} accessibilityRole="image" style={estilos.config}/>
+        </TouchableOpacity>
+        <Texto style={estilos.titulo}>SeniorSmart</Texto>
+        <TouchableOpacity onPress={navegacao}>
+          <Image source={cabecinha} accessibilityRole="image" />
+        </TouchableOpacity>
+      </View>
       <FlatList
         ref={flatListRef} // Adiciona a referência ao componente FlatList
         data={messages}
@@ -250,7 +291,7 @@ function Chatbot() {
         </TouchableOpacity>
       </View>
       <Modal visible={salvandoContato} animationType="slide">
-        <View style={estilos.modalContainer}>
+        <View style={estilos.modalContainer2}>
           <Text style={estilos.modalTitulo}>Salvar Contato</Text>
           <TextInput
             placeholder="Telefone do Contato"
@@ -264,6 +305,35 @@ function Chatbot() {
           </TouchableOpacity>
         </View>
       </Modal>
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={configVisible}
+        onRequestClose={toggleConfig}
+        >
+        <View style={estilos.modalContainer}>
+          <View style={estilos.modalContent}>
+            <Texto style={estilos.modalVelTitulo}>Selecione a velocidade da fala:</Texto>
+            <View style={estilos.modalVelCon}>
+              <TouchableOpacity style={estilos.modalBotOp} onPress={() => setVozVirtual(10000)}>
+                <Texto style={estilos.modalOpc}>Lento</Texto>
+              </TouchableOpacity>
+              <TouchableOpacity style={estilos.modalBotOp} onPress={() => setVozVirtual(5000)}>
+                <Texto style={estilos.modalOpc}>Médio</Texto>
+              </TouchableOpacity>
+              <TouchableOpacity style={estilos.modalBotOp} onPress={() => setVozVirtual(1000)}>
+                <Texto style={estilos.modalOpc}>Rápido</Texto>
+              </TouchableOpacity>
+            </View>
+            <TouchableOpacity style={estilos.modalBotOp} onPress={repeatLastMessage}>
+              <Texto style={estilos.modalOpc}>Repetir Última Mensagem</Texto>
+            </TouchableOpacity>
+            <TouchableOpacity style={estilos.modalBotOp} onPress={toggleFala}>
+              <Texto style={estilos.modalOpc}>{falaAtivada ? 'Desativar Fala' : 'Ativar Fala'}</Texto>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -272,6 +342,26 @@ const estilos = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F5EBEB',
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+    height: 40,
+    backgroundColor: '#867070',
+    alignItems: 'center',
+    paddingHorizontal: 18
+  },
+  titulo: {
+    fontSize: 14,
+    color: '#F5EBEB',
+    fontWeight: '900',
+    lineHeight: 24,
+    backgroundColor: '#867070'
+  },
+  config: {
+    height: 40,
+    width: 40
   },
   mensagemContainer: {
     padding: 8,
@@ -365,6 +455,50 @@ const estilos = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  modalContainer: {
+    flex: 1,
+    paddingTop: 40,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalContent: {
+    backgroundColor: '#F5EBEB',
+    border: 20,
+  },
+  modalVelTitulo: {
+    textAlign: 'center',
+    paddingTop: 16,
+    lineHeight:29,
+    fontWeight: '900',
+    fontSize: 24
+  },
+  modalVelCon: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingTop: 16,
+    paddingHorizontal: 16,
+  },
+  modalBotOp: {
+    backgroundColor: "#867070",
+    paddingHorizontal: 30,
+    paddingVertical: 7,
+    color: "#FFFFFF",
+    borderRadius: 20,
+    textAlign: "center",
+    marginBottom: 16,
+    marginHorizontal: 8
+  },
+  modalOpc: {
+    fontSize: 16,
+    lineHeight: 21,
+    fontWeight: '700',
+    color: '#F5EBEB',
+    textAlign: 'center'
+  },
+  modalContainer2: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 

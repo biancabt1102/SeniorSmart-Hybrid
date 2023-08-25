@@ -21,6 +21,7 @@ export function AuthProvider({ children }) {
   const [numeroDoCartao, setNumeroDoCartao] = useState('');
   const [validadeDoCartao, setValidadeDoCartao] = useState('');
   const [codigoDoCartao, setCodigoDoCartao] = useState('');
+  const [vozVirtual, setVozVirtual] = useState(5000);
 
   return (
     <AuthContext.Provider value={{ 
@@ -59,7 +60,9 @@ export function AuthProvider({ children }) {
       validadeDoCartao,
       setValidadeDoCartao,
       codigoDoCartao,
-      setCodigoDoCartao
+      setCodigoDoCartao,
+      vozVirtual,
+      setVozVirtual
       }}>
       {children}
     </AuthContext.Provider>

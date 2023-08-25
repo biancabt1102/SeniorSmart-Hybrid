@@ -15,12 +15,25 @@ export default function ExcluirConta() {
   
   
 
-  function deletar() {
-    if (confirmarSenha === senha) {
-      const resultado = deletarUsuario(usuarioId);
-      setIsLoggedIn(false);
-      Alert.alert("Conta excluída com sucesso!");
-      navigation.navigate('Home');
+  // Função deletar
+async function deletar() {
+  if (confirmarSenha === senha) {
+    try {
+      const resultado = await deletarUsuario(usuarioId);
+      console.log("mamamia:", resultado);
+      if (resultado === "Sucesso") {
+        Alert.alert("Conta excluída com sucesso!");
+        setIsLoggedIn(false);
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'Home' }] // Troque 'Home' pelo nome da sua tela inicial
+        });
+      } else {
+        Alert.alert("Erro ao excluir a conta!");
+      }
+    } catch (error) {
+      console.log("Erro ao deletar:", error);
+    }
     } else {
       Alert.alert("Senha incorreta. Por favor, tente novamente.");
     }

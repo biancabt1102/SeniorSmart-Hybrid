@@ -168,25 +168,24 @@ export async function alterarUsuario(
 
 
 
+// Função deletarUsuario
 export async function deletarUsuario(id) {
   try {
     const token = await obterToken();
-    const resultado = '';
     if (token) {
       await api.delete(`/usuarios/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`
         }
       });
-      resultado = 'sucesso';
-      return resultado;
+      console.log('Usuário excluído com sucesso.');
+      return "Sucesso";
     } else {
       console.log('Token não encontrado.');
-      resultado = 'erro';
-      return resultado;
+      return "Erro: Token não encontrado";
     }
   } catch (error) {
     console.log('Erro na exclusão do usuário:', error);
-    return 'erro';
+    return `Erro: ${error.message}`;
   }
 }
