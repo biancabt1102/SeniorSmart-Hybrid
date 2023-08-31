@@ -8,13 +8,13 @@ Antes de começar, certifique-se de que você tenha o **Node.js** e o **npm** in
 
 1. Clone o repositório do projeto:
 
-git clone <URL_DO_REPOSITÓRIO>
+`git clone <URL_DO_REPOSITÓRIO>`
 
 2. Navegue até a pasta do projeto
 
 3. Instale as dependências do projeto:
 
-npm install
+`npm install`
 
 4. Adicione o endereço IP da API no arquivo `api.js`. Substitua `<Coloque seu endereço de ip>` pelo endereço correto:
 
@@ -45,7 +45,7 @@ Chatbot.js
 
 Após configurar o projeto, você pode executar o aplicativo usando o seguinte comando:
 
-npx react-native run-android
+`npx react-native run-android`
 
 Isso iniciará o aplicativo e abrirá o ambiente de desenvolvimento. Você pode usar emuladores ou dispositivos físicos para testar o aplicativo.
 
