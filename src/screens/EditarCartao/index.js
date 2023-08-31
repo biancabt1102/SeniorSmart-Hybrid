@@ -25,7 +25,7 @@ export default function EditarCartao() {
     planoAnualUsuario,
   } = useContext(AuthContext);
 
-  const [Titular, setTitular] = useState(nomeNoCartao);
+  const [titular, setTitular] = useState(nomeNoCartao);
   const [numero, setNumero] = useState(numeroDoCartao);
   const [validade, setValidade] = useState(validadeDoCartao);
   const [cvv, setCvv] = useState(codigoDoCartao);
@@ -39,7 +39,6 @@ export default function EditarCartao() {
 
   async function procurarPagamento() {
     const resposta = await buscaPagamentoPlano(userIdPlano); // Substitua pela função correta para buscar o usuário por email
-    console.log("linguiça" + resposta.id)
     setIdDoCartao(resposta.id);
     setNomeNoCartao(resposta.nomeNoCartao);
     setNumeroDoCartao(resposta.numeroDoCartao);
@@ -50,7 +49,7 @@ export default function EditarCartao() {
 
   function validarCampos() {
     if (
-      Titular.trim() === "" ||
+      titular.trim() === "" ||
       numero.trim() === "" ||
       validade.trim() === "" ||
       cvv.trim() === ""
@@ -59,7 +58,7 @@ export default function EditarCartao() {
       return false;
     }
 
-    if (Titular.length < 3) {
+    if (titular.length < 3) {
       Alert.alert("Erro", "O titular do cartão deve ter mais do que 2 caracteres.");
       return false;
     }
@@ -90,10 +89,9 @@ export default function EditarCartao() {
 
     if (validarCampos()) {
     resposta = procurarPagamento();
-      console.log(resposta)
       const resultado = await editarPagamento(
         idDoCartao,
-        Titular,
+        titular,
         numero,
         validade,
         cvv,
@@ -104,7 +102,7 @@ export default function EditarCartao() {
       );
 
       if (resultado === "sucesso") {
-        setNomeNoCartao(Titular);
+        setNomeNoCartao(titular);
         setNumeroDoCartao(numero);
         setValidadeDoCartao(validade);
         setCodigoDoCartao(cvv);
@@ -155,7 +153,7 @@ export default function EditarCartao() {
             placeholder="Titular do cartão"
             autoCapitalize="none"
             style={estilos.conteudo}
-            value={Titular}
+            value={titular}
             onChangeText={setTitular}
             multiline
             placeholderTextColor="#000000"

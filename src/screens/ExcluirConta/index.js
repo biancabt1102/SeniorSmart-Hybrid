@@ -20,7 +20,6 @@ async function deletar() {
   if (confirmarSenha === senha) {
     try {
       const resultado = await deletarUsuario(usuarioId);
-      console.log("mamamia:", resultado);
       if (resultado === "Sucesso") {
         Alert.alert("Conta excluída com sucesso!");
         setIsLoggedIn(false);

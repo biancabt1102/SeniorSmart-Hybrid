@@ -1,7 +1,6 @@
 import api from '../api';
 
 export async function criarPlano(tipoPlano, planoMensal, planoAnual) {
-    console.log(tipoPlano, planoMensal, planoAnual);
     try {
       const requestBody = {
         tipoPlano: tipoPlano,
@@ -13,7 +12,6 @@ export async function criarPlano(tipoPlano, planoMensal, planoAnual) {
       
       // Acessar o ID da resposta
       const idDoPlano = response.data.id;
-      console.log(idDoPlano);
   
       return idDoPlano;
     } catch (error) {

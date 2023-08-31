@@ -17,7 +17,8 @@ export default function MudarSenha() {
     userIdPlano,
     tipoPlanoUsuario,
     planoMensalUsuario,
-    planoAnualUsuario
+    planoAnualUsuario,
+    setUserSenha
    } = useContext(AuthContext);
   const navigation = useNavigation();
   const [senhaAtual, setSenhaAtual] = useState(userSenha);
@@ -60,7 +61,8 @@ export default function MudarSenha() {
         );
     
         if (resultado === "sucesso") {
-          Alert.alert("Usuario atualizado!");
+          Alert.alert("Senha atualizado!");
+          setUserSenha(novaSenha);
           navigation.goBack();
         } else {
           Alert.alert("Erro ao atualizar o usuário!");

@@ -25,7 +25,6 @@ export async function cadastrarPagamento(
   planoMensal,
   planoAnual
 ) {
-  console.log(nomeCartao, numeroCartao, validade, cvv, planoid, tipoPlano, planoMensal, planoAnual);
   try {
     const requestBody = {
       nomeNoCartao: nomeCartao,
@@ -54,7 +53,6 @@ export async function cadastrarPagamento(
 }
 
 export async function buscaPagamentoPlano(idPlano) {
-  console.log("CHURROS" + idPlano)
   try {
     const response = await api.get(`/pagamentos/buscarPorPlano/${idPlano}`, {
       headers: {

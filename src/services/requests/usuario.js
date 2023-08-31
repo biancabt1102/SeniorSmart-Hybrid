@@ -5,7 +5,6 @@ import { obterToken } from '../../components/TokenManager'
 
  
 export async function cadastrarUsuario(nomeUsuario, emailUsuario, senhaUsuario, confirmarSenhaUsuario, nascimentoUsuario, telefoneUsuario, planoid, tipoPlano, planoMensal, planoAnual) {
-  console.log(nomeUsuario, emailUsuario, senhaUsuario, confirmarSenhaUsuario, nascimentoUsuario, telefoneUsuario, planoid, tipoPlano, planoMensal, planoAnual);
   
   try {
     const requestBody = {
@@ -25,7 +24,6 @@ export async function cadastrarUsuario(nomeUsuario, emailUsuario, senhaUsuario, 
     
     const response = await api.post('/usuarios/cadastro', requestBody);
     const idUsu = response.data.id;
-    console.log("Id:" + idUsu);
     
 
     // Verifica se a resposta da API contém um campo "data" (caso específico da biblioteca axios)
@@ -41,7 +39,6 @@ export async function cadastrarUsuario(nomeUsuario, emailUsuario, senhaUsuario, 
 }
 
 export async function loginUsuario(emailUsuario, senhaUsuario) {
-  console.log(emailUsuario, senhaUsuario);
   
   try {
     const requestBody = {
@@ -51,7 +48,6 @@ export async function loginUsuario(emailUsuario, senhaUsuario) {
     
     const response = await api.post('/usuarios/login', requestBody);
     const token = response.data.token;
-    console.log(token);
 
     // Salva o token no AsyncStorage
     await salvarToken(token);
@@ -76,14 +72,12 @@ export async function salvarToken(token) {
 export async function buscaUsuarioEmail(emailUsuario) {
   try {
     const token = await obterToken();
-    console.log("shimbalaie " + emailUsuario)
     if (token) {
       const response = await api.get(`/usuarios/email?email=${emailUsuario}`, {
         headers: {
           Authorization: `Bearer ${token}`
         }
       });
-      console.log(response.data.nome)
       return response.data;
     } else {
       console.log('Token não encontrado.');
@@ -97,16 +91,13 @@ export async function buscaUsuarioEmail(emailUsuario) {
 
 export async function buscaUsuarioPorIdPlano(idPlano) {
   try {
-    console.log(idPlano)
     const token = await obterToken();
-    console.log(token)
     if (token) {
       const response = await api.get(`/usuarios/plano/${idPlano}`, {
         headers: {
           Authorization: `Bearer ${token}`
         }
       });
-      console.log(response.data);
       return response.data;
     } else {
       console.log('Token não encontrado.');

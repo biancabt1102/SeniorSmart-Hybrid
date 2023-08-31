@@ -11,7 +11,10 @@ export default function SairConta() {
 
     function sair() {
         setIsLoggedIn(false);
-        navigation.navigate('Home');
+        navigation.reset({
+            index: 0,
+            routes: [{ name: 'Home' }] // Troque 'Home' pelo nome da sua tela inicial
+        });
     }
 
     return <View style={estilos.container}>

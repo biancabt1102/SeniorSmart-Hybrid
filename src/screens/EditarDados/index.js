@@ -34,7 +34,6 @@ export default function EditarDados() {
   const senha = userSenha
 
   async function alterar() {
-    console.log(userSenha)
     if (!nome || !email || !telefone || !data || !confirmarSenha) {
       Alert.alert("Erro", "Por favor, preencha todos os campos.");
       return;
@@ -77,18 +76,6 @@ export default function EditarDados() {
       setTelefoneUsuario(telefone);
       setDataUsuario(data);
       Alert.alert("Repositório atualizado!");
-      console.log(usuarioId,
-        nome,
-        email,
-        userSenha,
-        confirmarSenhaUsuario,
-        data,
-        telefone,
-        userIdPlano,
-        tipoPlanoUsuario,
-        planoMensalUsuario,
-        planoAnualUsuario,
-        nomeUsuario)
       navigation.goBack();
     } else {
       Alert.alert("Erro ao atualizar o repositório!");
