@@ -1,40 +1,19 @@
 import React from "react";
-import logo from '../assets/logo.png'
-import { View, Image, StyleSheet } from "react-native";
-import Cadastro from "../screens/Cadastro";
-import Login from "../screens/Login";
+import { View, Image } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import estilos from "../styles/EntrarStyles";
+import logo from "../assets/logo.png";
 
-export default function Entrar({ route }) {
-    const { screen } = route.params;
-    const Componet = screen === 'Cadastro' ? Cadastro : Login; 
-
-    return <KeyboardAwareScrollView contentContainerStyle={estilos.container}>
-                <View style={estilos.pai}>
-                    <View style={estilos.filho}>
-                        <Image source={logo} style={estilos.logo}/>
-                        <Componet/>
-                    </View>
+// Definição do componente Entrar, que recebe children como propriedade
+export default function Entrar({ children }) { 
+    return (
+        <KeyboardAwareScrollView contentContainerStyle={estilos.container}>
+            <View style={estilos.pai}>
+                <View style={estilos.filho}>
+                    <Image source={logo} style={estilos.logo}/>
+                    {children}
                 </View>
-    </KeyboardAwareScrollView>
+            </View>
+        </KeyboardAwareScrollView>
+    );
 }
-
-const estilos = StyleSheet.create({
-    container: {
-        flexGrow: 1,
-      },
-    pai: {
-        backgroundColor: '#E4D0D0'
-    },
-    filho: {
-        height: "94.5%",
-        marginHorizontal: 26,
-        marginVertical: 23,
-        backgroundColor: '#F5EBEB',
-        borderRadius: 20,
-        alignItems: 'center'
-    },
-    logo: {
-        marginTop: 41
-    }
-});

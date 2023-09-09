@@ -1,189 +1,118 @@
-import React, { useContext } from "react";
-import Home from "../Home";
-import { ScrollView, View, StyleSheet, TouchableOpacity, Alert } from "react-native";
-import Texto from "../../components/Texto";
 import { useNavigation } from "@react-navigation/native";
-import { cadastrarUsuario as criarUsuario } from "../../services/requests/usuario";
+import React, { useContext } from "react";
+import { Alert, ScrollView, TouchableOpacity, View } from "react-native";
+import AuthContext from "../../components/AuthContext";
+import Header from "../../components/Header";
+import Texto from "../../components/Texto";
 import { criarPlano } from "../../services/requests/plano";
-
-import AuthContext from "../../components/AuthContext"; // Importe o AuthContext
+import { cadastrarUsuario as criarUsuario } from "../../services/requests/usuario";
+import estilos from "../../styles/PlanoComTesteStyles";
+import Home from "../Home";
 
 export default function PlanoComTeste({ route }) {
   const navigation = useNavigation();
   const planoAno = '378.00';
   const planoMes = '35.00';
-  const usuario = route.params.usuario;
 
   // Obtém o contexto
   const authContext = useContext(AuthContext);
 
-  async function cadastrarPlano(plano, mensal, anual) {
-    const resultado = await criarPlano(plano, mensal, anual);
+  // Função para cadastrar um plano e em seguida o usuário
+  async function cadastrarPlanoEUsuario(tipoPlano, planoMensal, planoAnual) {
+    const resultadoPlano = await criarPlano(tipoPlano, planoMensal, planoAnual);
 
-    
-    if (resultado != null) {
-      authContext.setUserIdPlano(resultado); // Define o ID do plano no contexto
-      cadastrarUsuario(resultado, plano, mensal, anual);
+    if (resultadoPlano != null) {
+      authContext.setUserIdPlano(resultadoPlano);
+      cadastrarUsuario(resultadoPlano, tipoPlano, planoMensal, planoAnual);
     } else {
       Alert.alert('Erro ao Cadastrar!');
     }
   }
 
-  async function cadastrarUsuario(planoid, plano, mensal, anual) {
-    const resultado = await criarUsuario(
-      route.params.usuario,
-      route.params.emailUsuario,
-      route.params.senhaUsuario,
-      route.params.confirmarSenhaUsuario,
-      route.params.nascimentoUsuario,
-      route.params.telefoneUsuario,
+  // Função para cadastrar um usuário
+  async function cadastrarUsuario(planoid, tipoPlano, planoMensal, planoAnual) {
+    const {
+      usuario,
+      emailUsuario,
+      senhaUsuario,
+      confirmarSenhaUsuario,
+      nascimentoUsuario,
+      telefoneUsuario,
+    } = route.params;
+
+    const resultadoUsuario = await criarUsuario(
+      usuario,
+      emailUsuario,
+      senhaUsuario,
+      confirmarSenhaUsuario,
+      nascimentoUsuario,
+      telefoneUsuario,
       planoid,
-      plano,
-      mensal,
-      anual
+      tipoPlano,
+      planoMensal,
+      planoAnual
     );
 
-    if (resultado != 'sucesso') {
+    if (resultadoUsuario != null) {
       Alert.alert('Sucesso', 'Cadastro realizado com sucesso!');
     } else {
       Alert.alert('Erro ao Cadastrar!');
     }
   }
 
-  async function criar(tipoPlano, planoMensal, planoAnual) {
+  // Função para criar o plano e navegar para a próxima tela
+  function criarPlanoETela(tipoPlano, planoMensal, planoAnual) {
+    cadastrarPlanoEUsuario(tipoPlano, planoMensal, planoAnual);
+
     if (tipoPlano === "Teste Gratis") {
       Alert.alert("Plano Grátis!");
-      cadastrarPlano(tipoPlano, planoMensal, planoAnual);
-      navigation.navigate("Contratado", {
-        usuario: usuario
-      });
+      navigation.navigate("Contrato");
     } else if (tipoPlano === "Anual") {
       Alert.alert("Plano Anual!");
-      cadastrarPlano(tipoPlano, planoMensal, planoAnual);
-      navigation.navigate("Modelo", { 
-        preco: planoAnual,
-        tipo: tipoPlano, 
-        mensal: planoMensal,
-        anual: planoAnual, 
-        usuario: route.params,
-        planoid: authContext.userIdPlano, // Usando o ID do plano do contexto
-        screen: 'Pagamento'
+      navigation.navigate("Pagamento", {
+        planoid: authContext.userIdPlano,
+        preco: planoAnual
       });
     } else if (tipoPlano === "Mensal") {
       Alert.alert("Plano Mensal!");
-      cadastrarPlano(tipoPlano, planoMensal, planoAnual);
-      navigation.navigate("Modelo", { 
-        preco: planoMensal,
-        tipo: tipoPlano, 
-        mensal: planoMensal,
-        anual: planoAnual,
-        planoid: authContext.userIdPlano, // Usando o ID do plano do contexto
-        usuario: route.params, 
-        screen: 'Pagamento'
+      navigation.navigate("Pagamento", {
+        planoid: authContext.userIdPlano,
+        preco: planoMensal
       });
     }
   }
 
   const texto =
     "    Bem-vindo a Sexta-Feira, o nosso chat bot que irá facilitar sua vida tecnológica! Com linguagem simples e amigável, o Marcelo está aqui para ajudá-lo a realizar tarefas como instalar aplicativos, enviar e-mails e muito mais. Sinta-se à vontade para perguntar o que quiser e deixe o Marcelo guiá-lo rumo ao sucesso tecnológico!";
+
   return (
     <ScrollView contentContainerStyle={estilos.container}>
+      <Header voltar="true"/>
       <Home continuacao={false} conteudo={texto} />
       <View style={estilos.pai}>
         <Texto style={estilos.titulo}>Os melhores planos para você:</Texto>
-        <View style={estilos.opcao}>
-          <Texto style={estilos.planos}>Teste gratuito:</Texto>
-          <Texto style={estilos.precos}>R$00,00</Texto>
-          <TouchableOpacity
-            onPress={() => criar("Teste Gratis", null, null)}
-            style={estilos.botoes}
-          >
-            <Texto style={estilos.textos}>Contratar</Texto>
-          </TouchableOpacity>
-        </View>
-        <View style={estilos.opcao}>
-          <Texto style={estilos.planos}>Plano anual:</Texto>
-          <Texto style={estilos.precos}>R$378,00</Texto>
-          <TouchableOpacity
-            onPress={() => criar("Anual", null, planoAno)}
-            style={estilos.botoes}
-          >
-            <Texto style={estilos.textos}>Contratar</Texto>
-          </TouchableOpacity>
-        </View>
-        <View style={estilos.opcao}>
-          <Texto style={estilos.planos}>Plano mensal:</Texto>
-          <Texto style={estilos.precos}>R$35,00</Texto>
-          <TouchableOpacity
-            onPress={() => criar("Mensal", planoMes, null)}
-            style={estilos.botoes}
-          >
-            <Texto style={estilos.textos}>Contratar</Texto>
-          </TouchableOpacity>
-        </View>
+        {renderPlano("Teste Gratis", null, null)}
+        {renderPlano("Anual", null, planoAno)}
+        {renderPlano("Mensal", planoMes, null)}
       </View>
     </ScrollView>
   );
-}
 
-const estilos = StyleSheet.create({
-  container: {
-    flexGrow: 1,
-    backgroundColor: '#E4D0D0'
-  },
-  pai: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "#867070",
-    marginHorizontal: 16,
-    marginBottom: 31,
-    borderRadius: 20
-  },
-  titulo: {
-    textAlign: "center",
-    fontSize: 32,
-    lineHeight: 39,
-    fontWeight: "700",
-    color: "#F5EBEB",
-    marginHorizontal: 5,
-    marginTop: 18,
-    marginBottom: 12
-  },
-  opcao: {
-    marginBottom: 16,
-    alignItems: "center",
-    backgroundColor: '#E4D0D0',
-    borderRadius: 30,
-    marginTop: 19
-  },
-  planos: {
-    fontSize: 32,
-    lineHeight: 39,
-    fontWeight: '400',
-    color: '#000000',
-    marginTop: 4
-  },
-  precos: {
-    fontSize: 20,
-    lineHeight: 24,
-    fontWeight: '400',
-    color: '#483E3E',
-    marginVertical: 16
-  },
-  botoes: {
-    backgroundColor: "#867070",
-    paddingHorizontal: 50,
-    paddingVertical: 7,
-    color: "#FFFFFF",
-    borderRadius: 20,
-    textAlign: "center",
-    marginBottom: 14,
-    marginHorizontal: 45
-  },
-  textos: {
-    color: "#FFFFFF",
-    fontSize: 16,
-    fontWeight: "400",
-  },
-});
+  // Função para renderizar um plano com botão Contratar
+  function renderPlano(tipoPlano, planoMensal, planoAnual) {
+    return (
+      <View style={estilos.opcao}>
+        <Texto style={estilos.planos}>{tipoPlano}:</Texto>
+        <Texto style={estilos.precos}>
+          {tipoPlano === "Teste Gratis" ? "R$00,00" : tipoPlano === "Anual" ? `R$${planoAnual}` : `R$${planoMensal}`}
+        </Texto>
+        <TouchableOpacity
+          onPress={() => criarPlanoETela(tipoPlano, planoMensal, planoAnual)}
+          style={estilos.botoes}
+        >
+          <Texto style={estilos.textos}>Contratar</Texto>
+        </TouchableOpacity>
+      </View>
+    );
+  }
+}

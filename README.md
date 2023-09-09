@@ -16,7 +16,7 @@ Antes de começar, certifique-se de que você tenha o **Node.js** e o **npm** in
 
 `npm install`
 
-4. Adicione o endereço IP da API no arquivo `api.js`. Substitua `<Coloque seu endereço de ip>` pelo endereço correto:
+4. Adicione o endereço IP da API no arquivo `api.js`. Substitua `<Coloque seu endereço de ip>` pelo endereço correto para rodar a API no emulador:
 
 ```javascript
 // api.js
@@ -29,9 +29,9 @@ const api = axios.create({
 export default api;
 ```
 
-5. Adicione a chave da OpenAI no arquivo Chatbot.js. Substitua <Chave da OPENAI> pela sua chave de API do OpenAI:
+5. Adicione a chave da OpenAI no acomponente do Chatbot, chamado de OpenAIService.js. Substitua <Chave da OPENAI> pela sua chave de API do OpenAI:
 
-Chatbot.js
+OpenAIService.js
 ```
     {
         headers: {
@@ -60,7 +60,7 @@ O aplicativo SeniorSmart oferece os seguintes recursos:
 
 ## Contribuição
 
-Se você deseja contribuir para o projeto, sinta-se à vontade para enviar pull requests ou relatar problemas no repositório do projeto.
+Se você deseja contribuir para o projeto, sinta-se à vontade para enviar pull requests ou relatar problemas no repositório do projeto. Esse projeto ainda se encontra em construção.
 
 ## Licença
 

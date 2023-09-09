@@ -1,283 +1,215 @@
 import React, { useContext, useEffect, useState } from "react";
 import { View, StyleSheet, TextInput, Alert, ScrollView, TouchableOpacity } from "react-native";
 import Texto from "../../components/Texto";
-import { useNavigation } from "@react-navigation/native";
+import { CommonActions, useNavigation } from "@react-navigation/native";
 import AuthContext from "../../components/AuthContext";
 import { editarPagamento } from "../../services/requests/pagamento";
-import { buscaPagamentoPlano } from "../../services/requests/pagamento"; // Certifique-se de importar a função correta para buscar o usuário por email
+import { buscaPagamentoPlano } from "../../services/requests/pagamento"; 
+import { validarCamposPagamento } from "../../components/ValidacoesPagamento";
+import estilos from "../../styles/EditarCartaoStyles";
+import Header from "../../components/Header"
+import Modelo from "../../components/Modelo";
 
 export default function EditarCartao() {
-  const {
-    userIdPlano,
-    setIdDoCartao,
-    setNomeNoCartao,
-    setNumeroDoCartao,
-    setValidadeDoCartao,
-    setCodigoDoCartao,
-    nomeNoCartao,
-    numeroDoCartao,
-    validadeDoCartao,
-    codigoDoCartao,
-    userSenha,
-    idDoCartao,
-    tipoPlanoUsuario,
-    planoMensalUsuario,
-    planoAnualUsuario,
-  } = useContext(AuthContext);
-
-  const [titular, setTitular] = useState(nomeNoCartao);
-  const [numero, setNumero] = useState(numeroDoCartao);
-  const [validade, setValidade] = useState(validadeDoCartao);
-  const [cvv, setCvv] = useState(codigoDoCartao);
-  const [confirmarSenha, setConfirmarSenha] = useState("");
-  const senha = userSenha;
-  const navigation = useNavigation();
-
-  useEffect(() => {
-    procurarPagamento();
-  }, []);
-
-  async function procurarPagamento() {
-    const resposta = await buscaPagamentoPlano(userIdPlano); // Substitua pela função correta para buscar o usuário por email
-    setIdDoCartao(resposta.id);
-    setNomeNoCartao(resposta.nomeNoCartao);
-    setNumeroDoCartao(resposta.numeroDoCartao);
-    setValidadeDoCartao(resposta.validadeDoCartao);
-    setCodigoDoCartao(resposta.codigoDoCartao);
-    return resposta;
-  }
-
-  function validarCampos() {
-    if (
-      titular.trim() === "" ||
-      numero.trim() === "" ||
-      validade.trim() === "" ||
-      cvv.trim() === ""
-    ) {
-      Alert.alert("Erro", "Por favor, preencha todos os campos.");
-      return false;
-    }
-
-    if (titular.length < 3) {
-      Alert.alert("Erro", "O titular do cartão deve ter mais do que 2 caracteres.");
-      return false;
-    }
-
-    if (numero.replace(/\s/g, "").length !== 16) {
-      Alert.alert("Erro", "Por favor, digite um número de cartão válido.");
-      return false;
-    }
-
-    if (!validade.match(/^\d{4}-\d{2}-\d{2}$/)) {
-      Alert.alert("Erro", "Por favor, digite uma data de validade válida (YYYY-MM-DD).");
-      return false;
-    }
-
-    if (cvv.length !== 3) {
-      Alert.alert("Erro", "Por favor, digite um CVV válido (3 dígitos).");
-      return false;
-    }
-
-    return true;
-  }
-
-  async function handleEditarCartao() {
-    if (!senha || senha !== confirmarSenha) {
-      Alert.alert("Erro", "A senha digitada não corresponde à senha atual.");
-      return;
-    }
-
-    if (validarCampos()) {
-    resposta = procurarPagamento();
-      const resultado = await editarPagamento(
-        idDoCartao,
-        titular,
-        numero,
-        validade,
-        cvv,
+    const {
         userIdPlano,
+        setIdDoCartao,
+        userSenha,
+        idDoCartao,
         tipoPlanoUsuario,
         planoMensalUsuario,
         planoAnualUsuario
+    } = useContext(AuthContext);
+    
+    const navigation = useNavigation();
+
+    const [titular, setNomeNoCartao] = useState('');
+    const [numero, setNumeroDoCartao] = useState('');
+    const [validade, setValidadeDoCartao] = useState('');
+    const [cvv, setCodigoDoCartao] = useState('');
+    const [confirmarSenha, setConfirmarSenha] = useState('');
+    const [numeroSemEspaco, setNumeroSemEspaco] = useState('');
+    const [dataSalvar, setDataSalvar] = useState("");
+  
+    useEffect(() => {
+        procurarPagamento();
+      }, []);
+    
+      async function procurarPagamento() {
+        try {
+            const resposta = await buscaPagamentoPlano(userIdPlano);
+            setIdDoCartao(resposta.id);
+            setNomeNoCartao(resposta.nomeNoCartao);
+            setNumeroDoCartao(resposta.numeroDoCartao);
+            setValidadeDoCartao(reFormatarData(resposta.validadeDoCartao));
+            setCodigoDoCartao(resposta.codigoDoCartao);
+        } catch (error) {
+            console.error('Erro ao buscar usuário:', error);
+        }
+    }
+
+    async function alterar() {
+        try {
+            const mensagemErro = validarCamposPagamento(
+                titular,
+                numero,
+                validade,
+                cvv
+            );
+
+            if (mensagemErro) {
+                throw new Error(mensagemErro);
+              }
+        
+              if (userSenha !== confirmarSenha) {
+                throw new Error("A senha digitada não corresponde à senha atual.");
+              }
+
+              // Chamada para alterar os dados
+              const resultado = await editarPagamento(
+                idDoCartao,
+                titular,
+                numero,
+                dataSalvar,
+                cvv,
+                userIdPlano,
+                tipoPlanoUsuario,
+                planoMensalUsuario,
+                planoAnualUsuario
+              );
+
+              if (resultado === "sucesso") {
+                Alert.alert("Dados atualizados com sucesso!");
+                navigation.dispatch(
+                  CommonActions.reset({
+                    index: 0,
+                    routes: [{ name: 'Chatbot' }],
+                  })
+                );
+              } else {
+                // Feedback visual de erro
+                Alert.alert("Erro ao atualizar os dados.");
+              }
+
+        } catch (error){
+            // Tratamento de erros
+            Alert.alert("Erro", error.message);
+        }
+    }
+
+    // Função para formatar o número do cartão
+    const formatarNumeroCartao = (input) => {
+        const value = input.replace(/\D/g, ""); // Remove todos os caracteres não numéricos
+
+        // Formate o número do cartão com espaços a cada 4 dígitos
+        let formattedNumber = value.replace(/\B(?=(\d{4})+(?!\d))/g, " ");
+
+        setNumeroDoCartao(formattedNumber);
+        setNumeroSemEspaco(formattedNumber.replace(/\s/g, "")); // Remove os espaços antes de salvar
+    };
+
+    // Função para formatar a validade
+    const formatarValidade = (input) => {
+        const value = input.replace(/\D/g, ""); // Remove todos os caracteres não numéricos
+        const year = value.slice(2, 4);
+        const month = value.slice(0, 2);
+
+        // Formate a data como desejar
+        let formattedDate = `${month}/${year}`;
+        let data = `20${year}-${month}-01`
+        setDataSalvar(data);
+
+
+        setValidadeDoCartao(formattedDate);
+    };
+
+    function reFormatarData(data) {
+        const partes = data.split('-'); // Divide a data em partes (ano, mês, dia)
+        
+        if (partes.length !== 3) {
+            // Verifica se a data possui o formato esperado
+            return null;
+        }
+        
+        const ano = partes[0].slice(2); // Pega os dois últimos dígitos do ano
+        const mes = partes[1];
+        
+        // Formate a data como "MM/AA"
+        return `${mes}/${ano}`;
+    }
+
+    return (
+        <ScrollView contentContainerStyle={estilos.container}>
+            <Header voltar/>
+            <Modelo>
+                <Texto style={estilos.titulo}>Editar cartão</Texto>
+                <View style={estilos.conteiner}>
+                    <View style={estilos.informacoes}>
+                    <Texto style={estilos.tituloInfo}>Titular: </Texto>
+                    <TextInput
+                        placeholder="Titular do cartão"
+                        autoCapitalize="none"
+                        style={estilos.conteudo}
+                        value={titular}
+                        onChangeText={setNomeNoCartao}
+                        placeholderTextColor="#000000"
+                    />
+                    </View>
+                    <View style={estilos.informacoes}>
+                    <Texto style={estilos.tituloInfo}>Número: </Texto>
+                    <TextInput
+                        placeholder="xxxx xxxx xxxx xxxx"
+                        autoCapitalize="none"
+                        style={estilos.conteudo}
+                        value={numero}
+                        keyboardType="numeric"
+                        maxLength={19}
+                        onChangeText={formatarNumeroCartao}
+                        placeholderTextColor="#000000"
+                    />
+                    </View>
+                    <View style={estilos.informacoes}>
+                    <Texto style={estilos.tituloInfo}>Validade: </Texto>
+                    <TextInput
+                        placeholder="MM/AA"
+                        autoCapitalize="none"
+                        style={estilos.conteudo}
+                        value={validade}
+                        onChangeText={formatarValidade}
+                        keyboardType="numeric"
+                        placeholderTextColor="#000000"
+                    />
+                    <Texto style={estilos.tituloInfo}>CVV: </Texto>
+                    <TextInput
+                        placeholder="XXX"
+                        autoCapitalize="none"
+                        style={estilos.conteudo}
+                        value={cvv}
+                        onChangeText={setCodigoDoCartao}
+                        keyboardType="numeric"
+                        maxLength={3}
+                        placeholderTextColor="#000000"
+                    />
+                    </View>
+                </View>
+                <View style={estilos.conteiner}>
+                    <View style={estilos.informacoes}>
+                    <Texto style={estilos.tituloInfo}>Digite sua senha: </Texto>
+                    <TextInput
+                        placeholder="Coloque sua senha"
+                        autoCapitalize="none"
+                        style={estilos.conteudo}
+                        value={confirmarSenha}
+                        onChangeText={setConfirmarSenha}
+                        secureTextEntry
+                        placeholderTextColor="#000000"
+                    />
+                    </View>
+                </View>
+                <TouchableOpacity style={estilos.botoes} onPress={alterar}>
+                    <Texto style={estilos.textos}>Editar Dados</Texto>
+                </TouchableOpacity>
+          </Modelo>
+        </ScrollView>
       );
-
-      if (resultado === "sucesso") {
-        setNomeNoCartao(titular);
-        setNumeroDoCartao(numero);
-        setValidadeDoCartao(validade);
-        setCodigoDoCartao(cvv);
-        Alert.alert("Sucesso", "Cartão editado com sucesso!");
-        navigation.goBack();
-      } else {
-        Alert.alert("Erro ao editar o cartão!");
-      }
     }
-  }
-
-  function formatarNumeroCartao(input) {
-    const value = input.replace(/\D/g, ""); // Remove todos os caracteres não numéricos
-    let formattedNumber = value.replace(/\B(?=(\d{4})+(?!\d))/g, " ");
-    setNumero(formattedNumber);
-  }
-
-  function formatarValidade(input) {
-    const value = input.replace(/\D/g, ""); // Remove todos os caracteres não numéricos
-
-    if (value.length > 8) {
-      // Limita o campo da validade em 8 caracteres (YYYY-MM-DD)
-      value = value.slice(0, 8);
-    }
-
-    let formattedValidade = value;
-    if (value.length >= 6) {
-      // Adiciona hífens ("-") automaticamente após 4 e 6 caracteres
-      formattedValidade = `${value.slice(0, 4)}-${value.slice(4, 6)}-${value.slice(6)}`;
-    }
-
-    setValidade(formattedValidade);
-  }
-
-  function formatarCVV(input) {
-    const value = input.replace(/\D/g, ""); // Remove todos os caracteres não numéricos
-    let formattedCVV = value.slice(0, 3); // Limita o campo do CVV em 3 dígitos
-    setCvv(formattedCVV);
-  }
-
-  return (
-    <ScrollView contentContainerStyle={estilos.container}>
-      <Texto style={estilos.titulo}>Editar cartão</Texto>
-      <View style={estilos.conteiner}>
-        <View style={estilos.informacoes}>
-          <Texto style={estilos.tituloInfo}>Titular: </Texto>
-          <TextInput
-            placeholder="Titular do cartão"
-            autoCapitalize="none"
-            style={estilos.conteudo}
-            value={titular}
-            onChangeText={setTitular}
-            multiline
-            placeholderTextColor="#000000"
-          />
-        </View>
-        <View style={estilos.informacoes}>
-          <Texto style={estilos.tituloInfo}>Número: </Texto>
-          <TextInput
-            placeholder="Número do cartão"
-            autoCapitalize="none"
-            style={estilos.conteudo}
-            value={numero}
-            keyboardType="numeric"
-            maxLength={19}
-            onChangeText={formatarNumeroCartao}
-            placeholderTextColor="#000000"
-          />
-        </View>
-        <View style={estilos.informacoes}>
-          <Texto style={estilos.tituloInfo}>Validade: </Texto>
-          <TextInput
-            placeholder="YYYY-MM-DD"
-            autoCapitalize="none"
-            style={estilos.conteudo}
-            value={validade}
-            onChangeText={formatarValidade}
-            keyboardType="numeric"
-            maxLength={10}
-            multiline
-            placeholderTextColor="#000000"
-          />
-          <Texto style={estilos.tituloInfo}>CVV: </Texto>
-          <TextInput
-            placeholder="CVV"
-            autoCapitalize="none"
-            style={estilos.conteudo}
-            value={cvv}
-            onChangeText={formatarCVV}
-            keyboardType="numeric"
-            maxLength={3}
-            multiline
-            placeholderTextColor="#000000"
-          />
-        </View>
-      </View>
-      <View style={estilos.conteiner}>
-        <View style={estilos.informacoes}>
-          <Texto style={estilos.tituloInfo}>Digite sua senha: </Texto>
-          <TextInput
-            placeholder="Coloque sua senha"
-            autoCapitalize="none"
-            style={estilos.conteudo}
-            value={confirmarSenha}
-            onChangeText={setConfirmarSenha}
-            secureTextEntry
-            placeholderTextColor="#000000"
-          />
-        </View>
-      </View>
-      <TouchableOpacity style={estilos.botoes} onPress={handleEditarCartao}>
-        <Texto style={estilos.textos}>Editar Dados</Texto>
-      </TouchableOpacity>
-    </ScrollView>
-  );
-}
-
-const estilos = StyleSheet.create({
-  container: {
-    flexGrow: 1,
-  },
-  titulo: {
-    fontSize: 24,
-    lineHeight: 29,
-    fontWeight: "700",
-    color: "#483E3E",
-    textAlign: "center",
-    marginTop: 17,
-    marginBottom: 39,
-  },
-  conteiner: {
-    marginHorizontal: 25,
-    marginBottom: 45,
-    borderWidth: 1,
-    borderColor: "#483E3E",
-    paddingHorizontal: 11,
-    paddingTop: 11,
-  },
-  informacoes: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginBottom: 20,
-    alignItems: "center",
-  },
-  tituloInfo: {
-    fontSize: 16,
-    lineHeight: 20,
-    fontWeight: "400",
-    color: "#483E3E",
-  },
-  conteudo: {
-    borderWidth: 1,
-    borderColor: "#A6AEB3",
-    paddingVertical: 3,
-    paddingHorizontal: 11,
-    fontSize: 16,
-    lineHeight: 20,
-    fontWeight: "400",
-    color: "#000000",
-    maxWidth: '65%',
-    maxHeight: 100,
-  },
-  botoes: {
-    backgroundColor: "#867070",
-    paddingVertical: 7,
-    color: "#FFFFFF",
-    borderRadius: 20,
-    textAlign: "center",
-    alignItems: "center",
-    marginBottom: 14,
-    marginHorizontal: 105,
-  },
-  textos: {
-    color: "#FFFFFF",
-    fontSize: 16,
-    fontWeight: "400",
-  },
-});

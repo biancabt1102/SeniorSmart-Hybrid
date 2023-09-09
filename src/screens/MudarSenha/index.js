@@ -1,24 +1,27 @@
+import { CommonActions, useNavigation } from "@react-navigation/native";
 import React, { useContext, useState } from "react";
-import { View, StyleSheet, TextInput, TouchableOpacity, Alert, ScrollView } from "react-native";
+import { Alert, ScrollView, TextInput, TouchableOpacity, View } from "react-native";
 import Texto from "../../components/Texto";
-import { alterarUsuario } from "../../services/requests/usuario"
-import { useNavigation } from "@react-navigation/native";
+import { alterarUsuario } from "../../services/requests/usuario";
 
-import AuthContext from "../../components/AuthContext"; // Importe o AuthContext
+import AuthContext from "../../components/AuthContext";
+import Header from "../../components/Header";
+import Modelo from "../../components/Modelo";
+import estilos from "../../styles/MudarSenhaStyles";
 
 export default function MudarSenha() {
   const { 
-    userSenha, 
-    usuarioId, 
-    nomeUsuario, 
-    emailUsu, 
-    telefoneUsuario, 
-    dataUsuario,
-    userIdPlano,
-    tipoPlanoUsuario,
-    planoMensalUsuario,
-    planoAnualUsuario,
-    setUserSenha
+        usuarioId,
+        nomeUsuario,
+        emailUsu,
+        userSenha,
+        dataUsuario,
+        telefoneUsuario,
+        userIdPlano,
+        tipoPlanoUsuario,
+        planoMensalUsuario,
+        planoAnualUsuario,
+        setUserSenha
    } = useContext(AuthContext);
   const navigation = useNavigation();
   const [senhaAtual, setSenhaAtual] = useState(userSenha);
@@ -46,6 +49,7 @@ export default function MudarSenha() {
 
   async function alterar() {
     if (validarCampos()) {
+        console.log(emailUsu);
         const resultado = await alterarUsuario(
             usuarioId,
             nomeUsuario,
@@ -63,7 +67,12 @@ export default function MudarSenha() {
         if (resultado === "sucesso") {
           Alert.alert("Senha atualizado!");
           setUserSenha(novaSenha);
-          navigation.goBack();
+          navigation.dispatch(
+            CommonActions.reset({
+              index: 0,
+              routes: [{ name: 'Chatbot' }],
+            })
+          );
         } else {
           Alert.alert("Erro ao atualizar o usuário!");
         }
@@ -72,6 +81,8 @@ export default function MudarSenha() {
 
   return (
     <ScrollView contentContainerStyle={estilos.container}>
+        <Header voltar/>
+        <Modelo>
       <Texto style={estilos.titulo}>Mudar senha</Texto>
       <View style={estilos.conteiner}>
         <View style={estilos.informacoes}>
@@ -111,68 +122,7 @@ export default function MudarSenha() {
       <TouchableOpacity style={estilos.botoes} onPress={alterar}>
         <Texto style={estilos.textos}>Alterar Senha</Texto>
       </TouchableOpacity>
+      </Modelo>
     </ScrollView>
   );
 }
-
-const estilos = StyleSheet.create({
-  container: {
-    flexGrow: 1,
-  },
-  titulo: {
-    fontSize: 24,
-    lineHeight: 29,
-    fontWeight: "700",
-    color: "#483E3E",
-    textAlign: "center",
-    marginTop: 17,
-    marginBottom: 39,
-  },
-  conteiner: {
-    marginHorizontal: 25,
-    marginBottom: 45,
-    borderWidth: 1,
-    borderColor: "#483E3E",
-    paddingHorizontal: 11,
-    paddingTop: 11,
-  },
-  informacoes: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginBottom: 20,
-    alignItems: "center",
-  },
-  tituloInfo: {
-    fontSize: 16,
-    lineHeight: 20,
-    fontWeight: "400",
-    color: "#483E3E",
-  },
-  conteudo: {
-    borderWidth: 1,
-    borderColor: "#A6AEB3",
-    paddingVertical: 3,
-    paddingHorizontal: 11,
-    fontSize: 16,
-    lineHeight: 20,
-    fontWeight: "400",
-    color: "#000000",
-    maxWidth: '50%',
-    maxHeight: 100
-  },
-  botoes: {
-    backgroundColor: "#867070",
-    paddingVertical: 7,
-    color: "#FFFFFF",
-    borderRadius: 20,
-    textAlign: "center",
-    alignItems: "center",
-    marginBottom: 14,
-    marginHorizontal: 105,
-  },
-  textos: {
-    color: "#FFFFFF",
-    fontSize: 16,
-    fontWeight: "400",
-  },
-});

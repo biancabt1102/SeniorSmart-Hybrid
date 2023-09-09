@@ -1,6 +1,5 @@
 import React from "react";
 import { SafeAreaView, StatusBar, StyleSheet } from "react-native";
-import Chatbot from "./src/screens/Chatbot";
 import { AuthProvider } from './src/components/AuthContext';
 import AppRoutes from "./src/routes/AppRoutes";
 

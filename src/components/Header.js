@@ -1,103 +1,57 @@
-import React, { useContext, useState } from "react";
-import { Text, View, Image, StyleSheet, TouchableOpacity, Modal } from "react-native";
-import cabecinha from "../assets/cabecinhaHeader.png"
-import Texto from "./Texto";
-import setaVolta  from "../assets/setaVolta.png";
-import configuration from "../assets/config.png";
 import { useNavigation } from "@react-navigation/native";
-import AuthContext from './AuthContext';
+import React, { useContext, useState } from "react";
+import { Image, TouchableOpacity, View } from "react-native";
+import cabecinha from "../assets/cabecinhaHeader.png";
+import setaVolta from "../assets/setaVolta.png";
+import HeaderStyles from "../styles/HeaderStyles";
+import AuthContext from "./AuthContext";
+import Texto from "./Texto";
 
-export default function Header({ titulo = 'SeniorSmart', voltar = false, cabeca = true, estilo = estilos.titulo, config = false }) {
-    const navigation = useNavigation();
-    const { isLoggedIn, setVozVirtual } = useContext(AuthContext);
-    let navegacao = ''
+export default function Header({ titulo = 'SeniorSmart', voltar = false, cabeca = true, estilo = HeaderStyles.titulo, children }) {
+  const navigation = useNavigation();
+  const { isLoggedIn, setVozVirtual } = useContext(AuthContext);
 
-    if (isLoggedIn === true) {
-      navegacao = () => navigation.navigate("Modelo", { screen: 'Perfil' });
+  // Função para voltar para a tela anterior
+  const handleGoBack = () => {
+    navigation.goBack();
+  };
+
+  // Função para lidar com a navegação ao tocar na cabeça (se o usuário estiver logado) ou navegar para uma tela de perfil inválido
+  const handleNavigation = () => {
+    if (isLoggedIn) {
+      navigation.navigate("Perfil");
     } else {
-      navegacao = () => navigation.navigate("Invalido");
+      navigation.navigate("Invalido");
     }
+  };
 
-    const [configVisible, setConfigVisible] = useState(false);
+  const [configVisible, setConfigVisible] = useState(false);
 
-    const toggleConfig = () => {
-      setConfigVisible(!configVisible);
-    }
+  // Função para mostrar ou ocultar o modal de configuração
+  const toggleConfig = () => {
+    setConfigVisible(!configVisible);
+  };
 
-    return (
-      <View style={estilos.header}>
-        {voltar && (
-          <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Image source={setaVolta} accessibilityRole="image" />
-          </TouchableOpacity>
-        )}
-        {config && (
-          <TouchableOpacity onPress={toggleConfig}>
-            <Image source={configuration} accessibilityRole="image" style={estilos.config}/>
-          </TouchableOpacity>
-        )}
-        <Texto style={estilo}>{titulo}</Texto>
-        {cabeca && (
-          <TouchableOpacity onPress={navegacao}>
-            <Image source={cabecinha} accessibilityRole="image" />
-          </TouchableOpacity>
-        )}
+  // Função para alterar a velocidade da fala e fechar o modal de configuração
+  const handleSpeedChange = (speed) => {
+    setVozVirtual(speed);
+    toggleConfig();
+  };
 
-        {/* Configuração do modal */}
-        <Modal
-        animationType="slide"
-        transparent={true}
-        visible={configVisible}
-        onRequestClose={toggleConfig}
-        >
-        <View style={estilos.modalContainer}>
-          <View style={estilos.modalContent}>
-            <Texto>Selecione a velocidade da fala:</Texto>
-            <TouchableOpacity onPress={() => setVozVirtual(10000)}>
-              <Texto>Lento</Texto>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => setVozVirtual(5000)}>
-              <Texto>Médio</Texto>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={() => setVozVirtual(2000)}>
-              <Texto>Rápido</Texto>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
-
-      </View>
-    );
+  return (
+    <View style={HeaderStyles.header}>
+      {children}
+      {voltar && (
+        <TouchableOpacity onPress={handleGoBack}>
+          <Image source={setaVolta} accessibilityRole="image" />
+        </TouchableOpacity>
+      )}
+      <Texto style={estilo}>{titulo}</Texto>
+      {cabeca && (
+        <TouchableOpacity onPress={handleNavigation}>
+          <Image source={cabecinha} accessibilityRole="image" />
+        </TouchableOpacity>
+      )}
+    </View>
+  );
 }
-
-const estilos = StyleSheet.create({
-    header: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        width: '100%',
-        height: 40,
-        backgroundColor: '#867070',
-        alignItems: 'center',
-        paddingHorizontal: 18
-    },
-    titulo: {
-        fontSize: 14,
-        color: '#F5EBEB',
-        fontWeight: '900',
-        lineHeight: 24,
-    },
-    config: {
-      height: 40,
-      width: 40
-    }, 
-    modalContainer: {
-      flex: 1,
-      paddingTop: 50,
-      backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    },
-    modalContent: {
-      backgroundColor: 'white',
-      borderTopLeftRadius: 20,
-      borderTopRightRadius: 20,
-    },
-});
