@@ -2,6 +2,10 @@
 
 O projeto **SeniorSmart** é um aplicativo móvel que visa auxiliar idosos no uso da tecnologia por meio de um chatbot de assistência. O chatbot responde às perguntas dos idosos e fornece informações sobre tecnologia de maneira acessível e compreensível. O aplicativo possui recursos como salvar contatos, configurações de voz virtual e repetição da última mensagem.
 
+## Protótipo funcional da aplicação
+
+[Vídeo do protótipo](https://www.youtube.com/watch?v=HAWacXQwmb4)
+
 ## Instalação e Configuração
 
 Antes de começar, certifique-se de que você tenha o **Node.js** e o **npm** instalados no seu sistema. A seguir, siga as etapas para configurar o projeto:
