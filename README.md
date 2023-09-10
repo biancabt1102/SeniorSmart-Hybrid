@@ -49,6 +49,15 @@ Após configurar o projeto, você pode executar o aplicativo usando o seguinte c
 
 Isso iniciará o aplicativo e abrirá o ambiente de desenvolvimento. Você pode usar emuladores ou dispositivos físicos para testar o aplicativo.
 
+
+## Testes/Mudanças no *application.properties* da API
+
+Você pode testar o front com o Back, basta usar o código de Digital e fazer as devidas mudanças que quiser:
+- Caso querira testar a aplicação sem o token, basta habilitar o modo dev descomentando: ```#spring.profiles.active=dev```
+- Caso queira testar essa aplicação junto com a aplicação de hybrid, o react native dela, adicione: ```server.address=seu ip```, assim o react_native encontrara o caminho da aplicação.
+- Essa aplicação também possui o ```/swagger-ui/index.html#/``` como documentação.
+- Link da API de Digital: https://github.com/biancabt1102/SeniorSmart-digital
+
 ## Recursos Adicionais
 
 O aplicativo SeniorSmart oferece os seguintes recursos:
