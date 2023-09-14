@@ -87,8 +87,7 @@ export default function PlanoComTeste({ route }) {
 
   return (
     <ScrollView contentContainerStyle={estilos.container}>
-      <Header voltar="true"/>
-      <Home continuacao={false} conteudo={texto} />
+      <Home continuacao={false} conteudo={texto} voltar/>
       <View style={estilos.pai}>
         <Texto style={estilos.titulo}>Os melhores planos para você:</Texto>
         {renderPlano("Teste Gratis", null, null)}
