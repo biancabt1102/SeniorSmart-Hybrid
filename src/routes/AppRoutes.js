@@ -10,11 +10,11 @@ import PerfilInvalido from '../components/PerfilInvalido';
 import Login from '../screens/Login';
 import Chatbot from '../screens/Chatbot';
 import Perfil from '../screens/Perfil';
-import EditarDados from '../screens/EditarDados';
-import EditarCartao from '../screens/EditarCartao';
-import MudarSenha from '../screens/MudarSenha';
-import ExcluirConta from '../screens/ExcluirConta';
-import SairConta from '../screens/SairConta';
+import EdicaoDados from '../screens/EdicaoDados';
+import EdicaoCartao from '../screens/EdicaoCartao';
+import MudaSenha from '../screens/MudaSenha';
+import ExclusaoConta from '../screens/ExclusaoConta';
+import SaidaDaConta from '../screens/SaidaDaConta';
 
 
 const Stack = createNativeStackNavigator();
@@ -35,11 +35,11 @@ function AppRoutes() {
         <Stack.Screen name="Login" component={Login}/>
         <Stack.Screen name="Chatbot" component={Chatbot} />
         <Stack.Screen name="Perfil" component={Perfil} />
-        <Stack.Screen name="Editar Dados" component={EditarDados} />
-        <Stack.Screen name="Editar Cartao" component={EditarCartao} />
-        <Stack.Screen name="Mudar Senha" component={MudarSenha} />
-        <Stack.Screen name="Excluir Conta" component={ExcluirConta} />
-        <Stack.Screen name="Sair Conta" component={SairConta} />
+        <Stack.Screen name="Editar Dados" component={EdicaoDados} />
+        <Stack.Screen name="Editar Cartao" component={EdicaoCartao} />
+        <Stack.Screen name="Mudar Senha" component={MudaSenha} />
+        <Stack.Screen name="Excluir Conta" component={ExclusaoConta} />
+        <Stack.Screen name="Sair Conta" component={SaidaDaConta} />
       </Stack.Navigator>
     </NavigationContainer>
   );

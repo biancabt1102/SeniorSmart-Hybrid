@@ -1,4 +1,4 @@
-import { useNavigation } from "@react-navigation/native";
+import { CommonActions, useNavigation } from "@react-navigation/native";
 import React, { useContext, useState } from "react";
 import { Alert, TextInput, TouchableOpacity, View } from "react-native";
 import AuthContext from "../../components/AuthContext";
@@ -7,7 +7,7 @@ import Modelo from "../../components/Modelo";
 import Texto from "../../components/Texto";
 import { validarCamposPagamento } from "../../components/ValidacoesPagamento";
 import { cadastrarPagamento } from "../../services/requests/pagamento";
-import estilos from "../../styles/PagamentoStyles";
+import estilos from "./styles";
 
 export default function Pagamento({ route }) {
   const navigation = useNavigation();
@@ -78,7 +78,12 @@ export default function Pagamento({ route }) {
 
     if (!erro) {
       await criarPagamento();
-      navigation.navigate("Contrato"); 
+      navigation.dispatch(
+        CommonActions.reset({
+          index: 0,
+          routes: [{ name: 'Contrato' }],
+        })
+      );
     } else {
       Alert.alert(erro);
     }
@@ -86,7 +91,7 @@ export default function Pagamento({ route }) {
 
   return (
     <>
-      <Header voltar/>
+      <Header/>
       <Modelo>
         <Texto style={estilos.tituloPreco}>Total</Texto>
         <Texto style={estilos.preco}>R${route.params.preco}</Texto>

@@ -9,7 +9,7 @@ import Texto from "./Texto";
 
 export default function Header({ titulo = 'SeniorSmart', voltar = false, cabeca = true, estilo = HeaderStyles.titulo, children }) {
   const navigation = useNavigation();
-  const { isLoggedIn, setVozVirtual } = useContext(AuthContext);
+  const { isLoggedIn } = useContext(AuthContext);
 
   // Função para voltar para a tela anterior
   const handleGoBack = () => {
@@ -23,19 +23,6 @@ export default function Header({ titulo = 'SeniorSmart', voltar = false, cabeca 
     } else {
       navigation.navigate("Invalido");
     }
-  };
-
-  const [configVisible, setConfigVisible] = useState(false);
-
-  // Função para mostrar ou ocultar o modal de configuração
-  const toggleConfig = () => {
-    setConfigVisible(!configVisible);
-  };
-
-  // Função para alterar a velocidade da fala e fechar o modal de configuração
-  const handleSpeedChange = (speed) => {
-    setVozVirtual(speed);
-    toggleConfig();
   };
 
   return (

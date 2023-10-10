@@ -6,10 +6,10 @@ import Header from "../../components/Header";
 import Modelo from "../../components/Modelo";
 import Texto from "../../components/Texto";
 import { buscaUsuarioPorId } from "../../services/requests/usuario";
-import estilos from "../../styles/PerfilStyles";
+import estilos from "./styles";
 
 const Perfil = () => {
-  const { usuarioId, setEmailUsu, setDataUsuario, setTelefoneUsuario} = useContext(AuthContext);
+  const { usuarioId, updateAuthState} = useContext(AuthContext);
   const navigation = useNavigation();
   const [nomeUsuario, setNomeUsuario] = useState('');
   const [emailUsuario, setEmailUsuario] = useState('');
@@ -28,11 +28,13 @@ const Perfil = () => {
     try {
       const resposta = await buscaUsuarioPorId(usuarioId);
       setNomeUsuario(resposta.nome); 
-      setEmailUsu(resposta.email)
+      updateAuthState({ 
+        emailUsu : resposta.email, 
+        dataUsuario : resposta.data,
+        telefoneUsuario: resposta.telefone
+      });
       setEmailUsuario(resposta.email);
-      setTelefoneUsuario(resposta.telefone);
       setTelefoneUsu(resposta.telefone);
-      setDataUsuario(resposta.data);
       setDataUsu(resposta.data);
     } catch (error) {
       console.error('Erro ao buscar usuário:', error);

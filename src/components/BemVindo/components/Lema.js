@@ -1,6 +1,6 @@
 import React from "react";
-import BemVindoStyles from "../styles/BemVindoStyles";
-import Texto from "./Texto";
+import BemVindoStyles from "../styles";
+import Texto from "../../Texto";
 
 export default function BemVindoLema() {
   return (

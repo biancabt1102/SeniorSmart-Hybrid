@@ -1,9 +1,9 @@
 import React from "react";
 import { Image, View } from "react-native";
-import logo from "../assets/logo.png";
-import BemVindoStyles from "../styles/BemVindoStyles";
-import BemVindoContent from "./BemVindoContent";
-import BemVindoLema from "./BemVindoLema";
+import logo from '../../assets/logo.png';
+import BemVindoStyles from "./styles";
+import BemVindoContent from "./components/Content";
+import BemVindoLema from "./components/Lema";
 
 export default function BemVindo({ conteudo = null, continuacao = true }) {
   return (

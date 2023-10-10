@@ -2,7 +2,7 @@ import { useNavigation } from "@react-navigation/native";
 import React from "react";
 import { TouchableOpacity, View } from "react-native";
 import Texto from "../../components/Texto";
-import estilos from "../../styles/ContratoStyles";
+import estilos from "./styles";
 import Home from "../Home";
 
 export default function Contrato() {
@@ -14,7 +14,7 @@ export default function Contrato() {
   return (
     <View style={estilos.container}>
       {/* Renderiza o componente Home com o conteúdo fornecido */}
-      <Home conteudo={conteudo} continuacao={false} voltar={true} />
+      <Home conteudo={conteudo} continuacao={false} />
 
       {/* Botão para navegar para a tela de login */}
       <TouchableOpacity

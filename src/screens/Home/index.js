@@ -4,7 +4,7 @@ import { ScrollView, TouchableOpacity, View } from "react-native";
 import AuthContext from "../../components/AuthContext";
 import BemVindo from "../../components/BemVindo";
 import Texto from "../../components/Texto";
-import HomeStyles from "../../styles/HomeStyles";
+import HomeStyles from "./styles";
 import Header from "../../components/Header";
 
 const Home = ({ conteudo = null, continuacao = true, voltar= false }) => {

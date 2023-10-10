@@ -3,25 +3,15 @@ import { Text, TextInput, TouchableOpacity, View, StyleSheet, Alert } from "reac
 import { useNavigation, CommonActions } from "@react-navigation/native";
 import AuthContext from "../../components/AuthContext";
 import { buscaUsuarioEmail, loginUsuario } from "../../services/requests/usuario";
-import estilos from '../../styles/LoginStyles';
+import estilos from './styles';
 import Header from "../../components/Header";
-import Entrar from "../../components/Entrar"
+import Entrada from "../../components/Entrada"
 import { validarLogin } from "../../components/ValidacoesUsuario";
 
 export default function Login() {
   const [emailUsuario, setEmailUsuario] = useState('');
   const [senhaUsuario, setSenhaUsuario] = useState('');
-  const { 
-    setUsuarioId,
-    setUserSenha,
-    setUserIdPlano, 
-    setTipoPlanoUsuario,
-    setPlanoMensalUsuario,
-    setPlanoAnualUsuario, 
-    setIsLoggedIn, 
-    isLoggedIn,
-    setNomeUsuario
-  } = useContext(AuthContext);
+  const { updateAuthState, isLoggedIn, setIsLoggedIn } = useContext(AuthContext);
   const navigation = useNavigation();
 
   useEffect(() => {
@@ -37,6 +27,8 @@ export default function Login() {
       if (token) {
         Alert.alert('Sucesso', 'Login realizado com sucesso!');
         setIsLoggedIn(true);
+        await updateAuthState({userSenha: senhaUsuario});
+        console.log(isLoggedIn);
         await buscarUsuario();
       } else {
         Alert.alert('Erro ao fazer login!');
@@ -50,13 +42,15 @@ export default function Login() {
   async function buscarUsuario() {
     try {
       const resposta = await buscaUsuarioEmail(emailUsuario);
-      setUsuarioId(resposta.id);
-      setNomeUsuario(resposta.nome);
-      setUserSenha(senhaUsuario);
-      setUserIdPlano(resposta.plano.id);
-      setTipoPlanoUsuario(resposta.plano.tipoPlano);
-      setPlanoMensalUsuario(resposta.plano.planoMensal);
-      setPlanoAnualUsuario(resposta.plano.planoAnual);
+      updateAuthState({
+        usuarioId: resposta.id,
+        nomeUsuario: resposta.nome,
+        userSenha: senhaUsuario,
+        userIdPlano: resposta.plano.id,
+        tipoPlanoUsuario: resposta.plano.tipoPlano,
+        planoMensalUsuario: resposta.plano.planoMensal,
+        planoAnualUsuario: resposta.plano.planoAnual,
+      });
       return resposta;
     } catch (error) {
       console.error('Erro ao buscar o usuário:', error);
@@ -81,7 +75,7 @@ export default function Login() {
   return (
     <>
       <Header voltar/>
-      <Entrar>
+      <Entrada>
       <View style={estilos.login}>
         <Text style={estilos.titulo}>Entre na sua conta:</Text>
         <TextInput
@@ -109,7 +103,7 @@ export default function Login() {
       <TouchableOpacity style={estilos.botao} onPress={() => { navigation.navigate('Cadastro')}}>
         <Text style={estilos.textoBotao}>Cadastrar-se</Text>
       </TouchableOpacity>
-      </Entrar>
+      </Entrada>
     </>
   );
 }

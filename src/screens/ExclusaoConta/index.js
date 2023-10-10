@@ -6,13 +6,13 @@ import { deletarUsuario } from "../../services/requests/usuario";
 
 import { CommonActions, useNavigation } from "@react-navigation/native";
 import AuthContext from "../../components/AuthContext";
-import estilos from "../../styles/ExcluirContaStyles";
+import estilos from "./styles";
 import Header from "../../components/Header";
 import Modelo from "../../components/Modelo";
 
-export default function ExcluirConta() {
+export default function ExclusaoConta() {
   const navigation = useNavigation();
-  const { userSenha, usuarioId, setIsLoggedIn} = useContext(AuthContext);
+  const { userSenha, usuarioId, updateAuthState, setIsLoggedIn } = useContext(AuthContext);
   const senha = userSenha;
   const [confirmarSenha, setConfirmarSenha] = useState("");
   

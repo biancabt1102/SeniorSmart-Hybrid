@@ -5,10 +5,10 @@ import AuthContext from "../../components/AuthContext";
 import Header from "../../components/Header";
 import Modelo from "../../components/Modelo";
 import Texto from "../../components/Texto";
-import estilos from "../../styles/SairContaStyles";
+import estilos from "./styles";
 estilos
 
-export default function SairConta() {
+export default function SaidaDaConta() {
     const navigation = useNavigation();
     const { setIsLoggedIn } = useContext(AuthContext);
 

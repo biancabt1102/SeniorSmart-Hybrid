@@ -2,18 +2,19 @@ import { useNavigation } from "@react-navigation/native";
 import React, { useContext, useRef, useState } from "react";
 import { Alert, TextInput, TouchableOpacity, View } from "react-native";
 import AuthContext from "../../components/AuthContext";
-import Entrar from "../../components/Entrar";
+import Entrada from "../../components/Entrada";
 import Texto from "../../components/Texto";
 import { validarCampos } from "../../components/ValidacoesUsuario";
-import estilos from "../../styles/CadastroStyles"; // Importe os estilos
+import estilos from "./styles"; // Importe os estilos
 import Header from "../../components/Header";
+import { buscaUsuarioEmail } from "../../services/requests/usuario";
 
 export default function Cadastro() {
   // Use o destructuring para melhorar a legibilidade do código
   const [nomeUsuario, setNomeUsuario] = useState('');
   const [emailUsuario, setEmailUsuario] = useState('');
   const [senhaUsuario, setSenhaUsuario] = useState('');
-  const authContext = useContext(AuthContext);
+  const { updateAuthState } = useContext(AuthContext);
   const [confirmarSenhaUsuario, setConfirmarSenhaUsuario] = useState('');
   const [nascimentoUsuario, setNascimentoUsuario] = useState('');
   const [telefoneUsuario, setTelefoneUsuario] = useState('');
@@ -30,8 +31,9 @@ export default function Cadastro() {
   };
 
   // Função para tratar o cadastro
-  const handleCadastro = () => {
-    authContext.setUserSenha(senhaUsuario);
+  const handleCadastro = async () => {
+    updateAuthState({
+      userSenha: senhaUsuario});
     const erro = validarCampos(
         nomeUsuario,
         emailUsuario,
@@ -42,14 +44,20 @@ export default function Cadastro() {
       );
 
       if (!erro) {
-        navigation.navigate("PlanoComTeste", {
-          usuario: nomeUsuario,
-          emailUsuario: emailUsuario,
-          senhaUsuario: senhaUsuario,
-          confirmarSenhaUsuario: confirmarSenhaUsuario,
-          nascimentoUsuario: nascimentoUsuario,
-          telefoneUsuario: telefoneUsuario,
-        });
+        const usuarioExistente = await buscaUsuarioEmail(emailUsuario);
+
+        if (usuarioExistente) {
+          mostrarErro("Email já cadastrado. Por favor, escolha outro email.");
+        } else {
+          navigation.navigate("PlanoComTeste", {
+            usuario: nomeUsuario,
+            emailUsuario: emailUsuario,
+            senhaUsuario: senhaUsuario,
+            confirmarSenhaUsuario: confirmarSenhaUsuario,
+            nascimentoUsuario: nascimentoUsuario,
+            telefoneUsuario: telefoneUsuario,
+          });
+        }
       } else {
         mostrarErro(erro);
       }
@@ -83,7 +91,7 @@ export default function Cadastro() {
   return (
     <>
       <Header voltar="true"/>
-      <Entrar>
+      <Entrada>
         <View style={estilos.cadastro}>
           {/* Componentes de entrada para o formulário */}
           <TextInput
@@ -137,7 +145,7 @@ export default function Cadastro() {
           />
           
           <TextInput
-            placeholder="Telefone (11 12345-6789)"
+            placeholder="Telefone (11) 12345-6789"
             autoCapitalize="none"
             style={estilos.campos}
             keyboardType='numeric'
@@ -151,7 +159,7 @@ export default function Cadastro() {
         <TouchableOpacity style={estilos.botao} onPress={handleCadastro}>
           <Texto style={estilos.textoBotao}>Cadastrar-se</Texto>
         </TouchableOpacity>
-      </Entrar>
+      </Entrada>
     </>
   );
 }

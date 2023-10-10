@@ -7,9 +7,9 @@ import Modelo from "../../components/Modelo";
 import Texto from "../../components/Texto";
 import { validarEditarDados } from "../../components/ValidacoesUsuario";
 import { alterarUsuario, buscaUsuarioPorId } from "../../services/requests/usuario";
-import estilos from "../../styles/EditarDadosStyles";
+import estilos from "./styles";
 
-export default function EditarDados() {
+export default function EdicaoDados() {
   // Contexto e navegação
   const { 
     userSenha, 

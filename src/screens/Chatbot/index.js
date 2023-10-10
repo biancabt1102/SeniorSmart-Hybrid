@@ -17,11 +17,12 @@ import { useNavigation } from '@react-navigation/native';
 import Header from '../../components/Header';
 import { criarPergunta } from '../../services/requests/pergunta';
 import { criarResposta } from '../../services/requests/resposta';
-import estilos from '../../styles/ChatbotStyles';
+import estilos from './styles';
 import ChatMessage from './components/ChatMessage';
 import ConfigModal from './components/ConfigModal';
 import ContactModal from './components/ContactModal';
 import OpenAIService from './components/OpenAIService';
+import { PermissionsAndroid } from 'react-native';
 
 function Chatbot() {
   const navigation = useNavigation();
@@ -31,13 +32,19 @@ function Chatbot() {
   const flatListRef = useRef(null); // Referência ao componente FlatList
   // Obter o modelo do dispositivo
   const deviceModel = DeviceInfo.getModel();
-  const { nomeUsuario, isLoggedIn, velVoz, setVelVoz, vozVirtual, setVozVirtual } = useContext(AuthContext);
+  const {
+    isLoggedIn,
+    nomeUsuario,
+    vozVirtual,
+    velVoz,
+    tamanhoFonte
+  } = useContext(AuthContext);
   const [configVisible, setConfigVisible] = useState(false);
   const [falaAtivada, setFalaAtivada] = useState(true);
 
   let navegacao = '';
 
-  if (isLoggedIn === true) {
+  if (isLoggedIn) {
     navegacao = () => navigation.navigate('Modelo', { screen: 'Perfil' });
   } else {
     navegacao = () => navigation.navigate('Invalido');
@@ -68,8 +75,7 @@ function Chatbot() {
     };
   }, []);
 
-  const handleTtsFinish = () => {
-  };
+  const handleTtsFinish = () => {};
 
   const handleSendMessage = async () => {
     if (message.trim() === '') {
@@ -93,14 +99,42 @@ function Chatbot() {
         console.error('Erro ao salvar mensagens:', error);
       });
 
-    if (message.toLowerCase() === 'salvar contato') {
+    if (
+      message.toLowerCase() === 'salvar contato' ||
+      message.toLowerCase() === 'Salvar contato' ||
+      message.toLowerCase() === 'salvar Contato' ||
+      message.toLowerCase() === 'Salvar Contato' ||
+      message.toLowerCase() === 'SALVAR CONTATO' ||
+      message.toLowerCase() === 'SALVAR CONTATO ' ||
+      message.toLowerCase() === 'Salvar Contato ' ||
+      message.toLowerCase() === 'salvar Contato ' ||
+      message.toLowerCase() === 'salvar contato ' 
+    ) {
       setSalvandoContato(true);
+      return;
+    }
+
+    if (
+      message.toLowerCase() === 'localização' ||
+      message.toLowerCase() === 'Localização' ||
+      message.toLowerCase() === 'LOCALIZAÇÃO' ||
+      message.toLowerCase() === 'localizaço' ||
+      message.toLowerCase() === 'Localizaço ' ||
+      message.toLowerCase() === 'Localização ' || 
+      message.toLowerCase() === 'localização '  
+    ) {
+      // Solicitar permissão de localização
+      requestLocationPermission();
       return;
     }
 
     try {
       // Use o serviço OpenAIService para enviar a mensagem
-      const respostaGPT = await OpenAIService.enviarMensagem(message, nomeUsuario, deviceModel);
+      const respostaGPT = await OpenAIService.enviarMensagem(
+        message,
+        nomeUsuario,
+        deviceModel
+      );
 
       if (respostaGPT) {
         const gptResponse = {
@@ -114,15 +148,21 @@ function Chatbot() {
         setMessages(updatedMessages);
 
         // Salva as mensagens atualizadas no AsyncStorage (incluindo a nova resposta)
-        AsyncStorage.setItem('chatMessages', JSON.stringify(updatedMessages)).catch((error) => {
-          console.error('Erro ao salvar mensagens:', error);
-        });
+        AsyncStorage.setItem('chatMessages', JSON.stringify(updatedMessages)).catch(
+          (error) => {
+            console.error('Erro ao salvar mensagens:', error);
+          }
+        );
 
         speakText(gptResponse.content);
 
         const idPergunta = await criarPergunta(message);
         if (idPergunta) {
-          const statusResposta = await criarResposta(gptResponse.content, idPergunta, message); // Salvar a resposta
+          const statusResposta = await criarResposta(
+            gptResponse.content,
+            idPergunta,
+            message
+          ); // Salvar a resposta
           if (statusResposta === 'sucesso') {
             console.log('Pergunta e resposta salvas com sucesso!');
           } else {
@@ -154,7 +194,14 @@ function Chatbot() {
   };
 
   const renderMensagem = ({ item }) => {
-    return <ChatMessage content={item.content} isUser={item.isUser} author={nomeUsuario} />;
+    return (
+      <ChatMessage
+        content={item.content}
+        isUser={item.isUser}
+        author={nomeUsuario}
+        tamanhoFonte={tamanhoFonte}
+      />
+    );
   };
 
   const hideContactModal = () => {
@@ -162,18 +209,18 @@ function Chatbot() {
   };
 
   const handleSalvarContato = async (permissionCompare) => {
-      if (permissionCompare) {
-        setSalvandoContato(false);
+    if (permissionCompare) {
+      setSalvandoContato(false);
 
-        // Adicione uma mensagem de sucesso à lista de mensagens
-        const contatoSalvoMessage = {
-          id: Math.random().toString(),
-          content: 'Seu contato foi salvo com sucesso =)',
-          isUser: false,
-        };
+      // Adicione uma mensagem de sucesso à lista de mensagens
+      const contatoSalvoMessage = {
+        id: Math.random().toString(),
+        content: 'Seu contato foi salvo com sucesso =)',
+        isUser: false,
+      };
 
-        setMessages((prevMessages) => [...prevMessages, contatoSalvoMessage]);
-      } 
+      setMessages((prevMessages) => [...prevMessages, contatoSalvoMessage]);
+    }
   };
 
   const repeatLastMessage = () => {
@@ -181,6 +228,48 @@ function Chatbot() {
 
     if (lastChatbotMessage) {
       Tts.speak(lastChatbotMessage.content);
+    }
+  };
+
+  const requestLocationPermission = async () => {
+    try {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+        {
+          title: 'Permissão de Localização',
+          message: 'O Chatbot precisa de acesso à sua localização para responder à sua pergunta.',
+          buttonPositive: 'Conceder Permissão',
+        }
+      );
+
+      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+        // Feature futura para mostrar a localização da pessoa e pontos de interesse
+        const newMessage = {
+          id: Math.random().toString(),
+          content: 'TESTE DA LOCALIZAÇÃO',
+          isUser: false,
+        };
+
+        const updatedMessages = [...messages, newMessage];
+        setMessages(updatedMessages);
+
+        // Salvar as mensagens atualizadas no AsyncStorage
+        AsyncStorage.setItem('chatMessages', JSON.stringify(updatedMessages)).catch(
+          (error) => {
+            console.error('Erro ao salvar mensagens:', error);
+          }
+        );
+
+        // Falar o texto "Brasil" se a fala estiver ativada
+        speakText(newMessage.content);
+
+        // Rolar para o final da lista
+        flatListRef.current.scrollToEnd({ animated: true });
+      } else {
+        console.warn('Permissão de localização negada');
+      }
+    } catch (err) {
+      console.error('Erro ao solicitar permissão de localização:', err);
     }
   };
 
@@ -217,8 +306,6 @@ function Chatbot() {
       <ConfigModal
         visible={configVisible}
         toggleConfig={toggleConfig}
-        setVozVirtual={setVozVirtual}
-        setVelVoz={setVelVoz}
         repeatLastMessage={repeatLastMessage}
         falaAtivada={falaAtivada}
         setFalaAtivada={setFalaAtivada}

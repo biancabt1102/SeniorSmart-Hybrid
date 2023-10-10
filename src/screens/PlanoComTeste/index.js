@@ -1,4 +1,4 @@
-import { useNavigation } from "@react-navigation/native";
+import { CommonActions, useNavigation } from "@react-navigation/native";
 import React, { useContext } from "react";
 import { Alert, ScrollView, TouchableOpacity, View } from "react-native";
 import AuthContext from "../../components/AuthContext";
@@ -6,23 +6,23 @@ import Header from "../../components/Header";
 import Texto from "../../components/Texto";
 import { criarPlano } from "../../services/requests/plano";
 import { cadastrarUsuario as criarUsuario } from "../../services/requests/usuario";
-import estilos from "../../styles/PlanoComTesteStyles";
+import estilos from "./styles";
 import Home from "../Home";
 
 export default function PlanoComTeste({ route }) {
   const navigation = useNavigation();
-  const planoAno = '378.00';
-  const planoMes = '35.00';
+  const planoAno = '521.04';
+  const planoMes = '43.42';
 
   // Obtém o contexto
-  const authContext = useContext(AuthContext);
+  const { userIdPlano, updateAuthState } = useContext(AuthContext);
 
   // Função para cadastrar um plano e em seguida o usuário
   async function cadastrarPlanoEUsuario(tipoPlano, planoMensal, planoAnual) {
     const resultadoPlano = await criarPlano(tipoPlano, planoMensal, planoAnual);
 
     if (resultadoPlano != null) {
-      authContext.setUserIdPlano(resultadoPlano);
+      updateAuthState({ userIdPlano : resultadoPlano });
       cadastrarUsuario(resultadoPlano, tipoPlano, planoMensal, planoAnual);
     } else {
       Alert.alert('Erro ao Cadastrar!');
@@ -66,19 +66,33 @@ export default function PlanoComTeste({ route }) {
 
     if (tipoPlano === "Teste Gratis") {
       Alert.alert("Plano Grátis!");
-      navigation.navigate("Contrato");
+      navigation.dispatch(
+        CommonActions.reset({
+          index: 0,
+          routes: [{ name: 'Contrato' }],
+        })
+      );
     } else if (tipoPlano === "Anual") {
       Alert.alert("Plano Anual!");
-      navigation.navigate("Pagamento", {
-        planoid: authContext.userIdPlano,
-        preco: planoAnual
-      });
+      
+      navigation.dispatch(
+        CommonActions.reset({
+          index: 0,
+          routes: [{ name: 'Pagamento', 
+                    params: { planoid: userIdPlano, preco: planoAnual} }],
+        })
+      );
+
     } else if (tipoPlano === "Mensal") {
       Alert.alert("Plano Mensal!");
-      navigation.navigate("Pagamento", {
-        planoid: authContext.userIdPlano,
-        preco: planoMensal
-      });
+
+      navigation.dispatch(
+        CommonActions.reset({
+          index: 0,
+          routes: [{ name: 'Pagamento', 
+                    params: { planoid: userIdPlano, preco: planoMensal} }],
+        })
+      );
     }
   }
 

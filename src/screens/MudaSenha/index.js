@@ -7,9 +7,9 @@ import { alterarUsuario } from "../../services/requests/usuario";
 import AuthContext from "../../components/AuthContext";
 import Header from "../../components/Header";
 import Modelo from "../../components/Modelo";
-import estilos from "../../styles/MudarSenhaStyles";
+import estilos from "./styles";
 
-export default function MudarSenha() {
+export default function MudaSenha() {
   const { 
         usuarioId,
         nomeUsuario,
@@ -21,7 +21,7 @@ export default function MudarSenha() {
         tipoPlanoUsuario,
         planoMensalUsuario,
         planoAnualUsuario,
-        setUserSenha
+        updateAuthState
    } = useContext(AuthContext);
   const navigation = useNavigation();
   const [senhaAtual, setSenhaAtual] = useState(userSenha);
@@ -66,7 +66,7 @@ export default function MudarSenha() {
     
         if (resultado === "sucesso") {
           Alert.alert("Senha atualizado!");
-          setUserSenha(novaSenha);
+          updateAuthState({ userSenha: novaSenha });
           navigation.dispatch(
             CommonActions.reset({
               index: 0,

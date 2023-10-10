@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import Contacts from 'react-native-contacts';
 import Texto from '../../../components/Texto';
-import estilos from '../../../styles/ChatbotStyles';
+import estilos from '../styles';
 
 const ContactModal = ({ visible, onSaveContact, onCancel }) => {
   const [telefoneContato, setTelefoneContato] = useState('');

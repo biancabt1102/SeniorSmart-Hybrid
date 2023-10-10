@@ -6,19 +6,19 @@ import AuthContext from "../../components/AuthContext";
 import { editarPagamento } from "../../services/requests/pagamento";
 import { buscaPagamentoPlano } from "../../services/requests/pagamento"; 
 import { validarCamposPagamento } from "../../components/ValidacoesPagamento";
-import estilos from "../../styles/EditarCartaoStyles";
+import estilos from "./styles";
 import Header from "../../components/Header"
 import Modelo from "../../components/Modelo";
 
-export default function EditarCartao() {
+export default function EdicaoCartao() {
     const {
         userIdPlano,
-        setIdDoCartao,
         userSenha,
         idDoCartao,
         tipoPlanoUsuario,
         planoMensalUsuario,
-        planoAnualUsuario
+        planoAnualUsuario,
+        updateAuthState
     } = useContext(AuthContext);
     
     const navigation = useNavigation();
@@ -38,7 +38,7 @@ export default function EditarCartao() {
       async function procurarPagamento() {
         try {
             const resposta = await buscaPagamentoPlano(userIdPlano);
-            setIdDoCartao(resposta.id);
+            updateAuthState({ idDoCartao: resposta.id });
             setNomeNoCartao(resposta.nomeNoCartao);
             setNumeroDoCartao(resposta.numeroDoCartao);
             setValidadeDoCartao(reFormatarData(resposta.validadeDoCartao));
