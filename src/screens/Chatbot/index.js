@@ -128,6 +128,112 @@ function Chatbot() {
       return;
     }
 
+    if (
+      message.toLowerCase() === 'quero ir para a praça da república' ||
+      message.toLowerCase() === 'quero ir para a praça da republica' ||
+      message.toLowerCase() === 'quero ir para a praca da republica' ||
+      message.toLowerCase() === 'Quero ir para a praça da república' ||
+      message.toLowerCase() === 'Quero ir para a praça da republica' ||
+      message.toLowerCase() === 'Quero ir para a praca da republica' ||
+      message.toLowerCase() === 'quero ir para a Praça da República' ||
+      message.toLowerCase() === 'Quero ir para a Praça da República' ||
+      message.toLowerCase() === 'quero ir para a Praça da REPÚBLICA' ||
+      message.toLowerCase() === 'Quero ir para a Praça da REPÚBLICA' ||
+      message.toLowerCase() === 'quero ir para a praça da REPÚBLICA' ||
+      message.toLowerCase() === 'Quero ir para a praça da REPÚBLICA' ||
+      message.toLowerCase() === 'quero ir para a Praça da República ' ||
+      message.toLowerCase() === 'Quero ir para a Praça da República ' ||
+      message.toLowerCase() === 'quero ir para a Praça da REPÚBLICA ' ||
+      message.toLowerCase() === 'Quero ir para a Praça da REPÚBLICA ' ||
+      message.toLowerCase() === 'quero ir para a praça da REPÚBLICA ' ||
+      message.toLowerCase() === 'Quero ir para a praça da REPÚBLICA ' ||
+      message.toLowerCase() === 'quero ir para a Praça da República  ' ||
+      message.toLowerCase() === 'Quero ir para a Praça da República  ' ||
+      message.toLowerCase() === 'quero ir para a Praça da REPÚBLICA  ' ||
+      message.toLowerCase() === 'Quero ir para a Praça da REPÚBLICA  ' ||
+      message.toLowerCase() === 'leve-me à praça da república' ||
+      message.toLowerCase() === 'me direcione para a Praça da República' ||
+      message.toLowerCase() === 'como chegar à Praça da República' ||
+      message.toLowerCase() === 'como ir até a praça da República' ||
+      message.toLowerCase() === 'navegue até a Praça da República' ||
+      message.toLowerCase() === 'Praça da República' ||
+      message.toLowerCase() === 'Praça da REPÚBLICA' ||
+      message.toLowerCase() === 'REPÚBLICA' 
+    ) {
+      // Resposta personalizada
+      const respostaPersonalizada = "Você está na Av. Lins De Vasconcelos e deve pegar o Praça da República 4113-10";
+      
+      const newMessage = {
+        id: Math.random().toString(),
+        content: respostaPersonalizada,
+        isUser: false,
+      };
+    
+      const newMessages = [...messages, newMessage];
+    
+      setMessages(newMessages);
+      setMessage('');
+    
+      // Salva as mensagens no AsyncStorage
+      AsyncStorage.setItem('chatMessages', JSON.stringify(newMessages))
+        .catch((error) => {
+          console.error('Erro ao salvar mensagens:', error);
+        });
+    
+      // Fala a resposta
+      speakText(respostaPersonalizada);
+    
+      // Rola para o final da lista
+      flatListRef.current.scrollToEnd({ animated: true });
+    
+      return;
+    }
+    
+    if (
+      message.toLowerCase() === 'quero comer hambúrguer' ||
+      message.toLowerCase() === 'quero comer hamburguer' ||
+      message.toLowerCase() === 'quero comer hamburguer ' ||
+      message.toLowerCase() === 'Quero comer hambúrguer' ||
+      message.toLowerCase() === 'Quero comer hamburguer' ||
+      message.toLowerCase() === 'Quero comer hamburguer ' ||
+      message.toLowerCase() === 'quero um hambúrguer' ||
+      message.toLowerCase() === 'estou com fome, quero hambúrguer' ||
+      message.toLowerCase() === 'gostaria de comer hambúrguer agora' ||
+      message.toLowerCase() === 'onde posso encontrar hambúrguer' ||
+      message.toLowerCase() === 'me indique uma hamburgueria' ||
+      message.toLowerCase() === 'preciso de um hambúrguer' ||
+      message.toLowerCase() === 'hambúrguer' 
+    ) {
+      // Resposta personalizada para hambúrguer
+      const respostaPersonalizada = "Você está na Av. Lins De Vasconcelos e pode ir na Burger Espacial, Av. Lins de Vasconcelos, 1303 - Cambuci, São Paulo - SP, 01537-001. Aberta das 12:00 ás 00:00";
+    
+      const newMessage = {
+        id: Math.random().toString(),
+        content: respostaPersonalizada,
+        isUser: false,
+      };
+    
+      const newMessages = [...messages, newMessage];
+    
+      setMessages(newMessages);
+      setMessage('');
+    
+      // Salva as mensagens no AsyncStorage
+      AsyncStorage.setItem('chatMessages', JSON.stringify(newMessages))
+        .catch((error) => {
+          console.error('Erro ao salvar mensagens:', error);
+        });
+    
+      // Fala a resposta
+      speakText(respostaPersonalizada);
+    
+      // Rola para o final da lista
+      flatListRef.current.scrollToEnd({ animated: true });
+    
+      return;
+    }
+    
+
     try {
       // Use o serviço OpenAIService para enviar a mensagem
       const respostaGPT = await OpenAIService.enviarMensagem(
@@ -246,7 +352,7 @@ function Chatbot() {
         // Feature futura para mostrar a localização da pessoa e pontos de interesse
         const newMessage = {
           id: Math.random().toString(),
-          content: 'TESTE DA LOCALIZAÇÃO',
+          content: 'Você se encontra na Você está na Av. Lins De Vasconcelos.\nPerto da sua localização encontramos possíveis lugares de interesse:\n\nFIAP - Aclimação\nEducação superior\nAv. Lins de Vasconcelos, 1222 - Aclimação, São Paulo - SP, 01538-001\n\nCacau Show\nLoja de chocolates\nAv. Lins de Vasconcelos, 1251 - Cambuci, São Paulo - SP, 01538-001\n\nEduPoint\nConsultor educacional\nAv. Lins de Vasconcelos, 1222 - Cambuci, São Paulo - SP, 01538-001\n\nChurros DamaC\nCasa de churros\nAv. Lins de Vasconcelos, 1194 - Cambuci, São Paulo - SP, 01538-001\n\nSalão Alice\nSalão de Beleza\nAv. Lins de Vasconcelos, 1213 - Cambuci, São Paulo - SP, 01537-001',
           isUser: false,
         };
 
