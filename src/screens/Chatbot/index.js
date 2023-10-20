@@ -127,113 +127,7 @@ function Chatbot() {
       requestLocationPermission();
       return;
     }
-
-    if (
-      message.toLowerCase() === 'quero ir para a praça da república' ||
-      message.toLowerCase() === 'quero ir para a praça da republica' ||
-      message.toLowerCase() === 'quero ir para a praca da republica' ||
-      message.toLowerCase() === 'Quero ir para a praça da república' ||
-      message.toLowerCase() === 'Quero ir para a praça da republica' ||
-      message.toLowerCase() === 'Quero ir para a praca da republica' ||
-      message.toLowerCase() === 'quero ir para a Praça da República' ||
-      message.toLowerCase() === 'Quero ir para a Praça da República' ||
-      message.toLowerCase() === 'quero ir para a Praça da REPÚBLICA' ||
-      message.toLowerCase() === 'Quero ir para a Praça da REPÚBLICA' ||
-      message.toLowerCase() === 'quero ir para a praça da REPÚBLICA' ||
-      message.toLowerCase() === 'Quero ir para a praça da REPÚBLICA' ||
-      message.toLowerCase() === 'quero ir para a Praça da República ' ||
-      message.toLowerCase() === 'Quero ir para a Praça da República ' ||
-      message.toLowerCase() === 'quero ir para a Praça da REPÚBLICA ' ||
-      message.toLowerCase() === 'Quero ir para a Praça da REPÚBLICA ' ||
-      message.toLowerCase() === 'quero ir para a praça da REPÚBLICA ' ||
-      message.toLowerCase() === 'Quero ir para a praça da REPÚBLICA ' ||
-      message.toLowerCase() === 'quero ir para a Praça da República  ' ||
-      message.toLowerCase() === 'Quero ir para a Praça da República  ' ||
-      message.toLowerCase() === 'quero ir para a Praça da REPÚBLICA  ' ||
-      message.toLowerCase() === 'Quero ir para a Praça da REPÚBLICA  ' ||
-      message.toLowerCase() === 'leve-me à praça da república' ||
-      message.toLowerCase() === 'me direcione para a Praça da República' ||
-      message.toLowerCase() === 'como chegar à Praça da República' ||
-      message.toLowerCase() === 'como ir até a praça da República' ||
-      message.toLowerCase() === 'navegue até a Praça da República' ||
-      message.toLowerCase() === 'Praça da República' ||
-      message.toLowerCase() === 'Praça da REPÚBLICA' ||
-      message.toLowerCase() === 'REPÚBLICA' 
-    ) {
-      // Resposta personalizada
-      const respostaPersonalizada = "Você está na Av. Lins De Vasconcelos e deve pegar o Praça da República 4113-10";
-      
-      const newMessage = {
-        id: Math.random().toString(),
-        content: respostaPersonalizada,
-        isUser: false,
-      };
-    
-      const newMessages = [...messages, newMessage];
-    
-      setMessages(newMessages);
-      setMessage('');
-    
-      // Salva as mensagens no AsyncStorage
-      AsyncStorage.setItem('chatMessages', JSON.stringify(newMessages))
-        .catch((error) => {
-          console.error('Erro ao salvar mensagens:', error);
-        });
-    
-      // Fala a resposta
-      speakText(respostaPersonalizada);
-    
-      // Rola para o final da lista
-      flatListRef.current.scrollToEnd({ animated: true });
-    
-      return;
-    }
-    
-    if (
-      message.toLowerCase() === 'quero comer hambúrguer' ||
-      message.toLowerCase() === 'quero comer hamburguer' ||
-      message.toLowerCase() === 'quero comer hamburguer ' ||
-      message.toLowerCase() === 'Quero comer hambúrguer' ||
-      message.toLowerCase() === 'Quero comer hamburguer' ||
-      message.toLowerCase() === 'Quero comer hamburguer ' ||
-      message.toLowerCase() === 'quero um hambúrguer' ||
-      message.toLowerCase() === 'estou com fome, quero hambúrguer' ||
-      message.toLowerCase() === 'gostaria de comer hambúrguer agora' ||
-      message.toLowerCase() === 'onde posso encontrar hambúrguer' ||
-      message.toLowerCase() === 'me indique uma hamburgueria' ||
-      message.toLowerCase() === 'preciso de um hambúrguer' ||
-      message.toLowerCase() === 'hambúrguer' 
-    ) {
-      // Resposta personalizada para hambúrguer
-      const respostaPersonalizada = "Você está na Av. Lins De Vasconcelos e pode ir na Burger Espacial, Av. Lins de Vasconcelos, 1303 - Cambuci, São Paulo - SP, 01537-001. Aberta das 12:00 ás 00:00";
-    
-      const newMessage = {
-        id: Math.random().toString(),
-        content: respostaPersonalizada,
-        isUser: false,
-      };
-    
-      const newMessages = [...messages, newMessage];
-    
-      setMessages(newMessages);
-      setMessage('');
-    
-      // Salva as mensagens no AsyncStorage
-      AsyncStorage.setItem('chatMessages', JSON.stringify(newMessages))
-        .catch((error) => {
-          console.error('Erro ao salvar mensagens:', error);
-        });
-    
-      // Fala a resposta
-      speakText(respostaPersonalizada);
-    
-      // Rola para o final da lista
-      flatListRef.current.scrollToEnd({ animated: true });
-    
-      return;
-    }
-    
-
+        
     try {
       // Use o serviço OpenAIService para enviar a mensagem
       const respostaGPT = await OpenAIService.enviarMensagem(
@@ -349,10 +243,10 @@ function Chatbot() {
       );
 
       if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-        // Feature futura para mostrar a localização da pessoa e pontos de interesse
+        // Feature futura para mostrar a localização da pessoa e pontos de interesse utilizando a API do Maps, exemplo de como seria com o endereço do next.
         const newMessage = {
           id: Math.random().toString(),
-          content: 'Você se encontra na Você está na Av. Lins De Vasconcelos.\nPerto da sua localização encontramos possíveis lugares de interesse:\n\nFIAP - Aclimação\nEducação superior\nAv. Lins de Vasconcelos, 1222 - Aclimação, São Paulo - SP, 01538-001\n\nCacau Show\nLoja de chocolates\nAv. Lins de Vasconcelos, 1251 - Cambuci, São Paulo - SP, 01538-001\n\nEduPoint\nConsultor educacional\nAv. Lins de Vasconcelos, 1222 - Cambuci, São Paulo - SP, 01538-001\n\nChurros DamaC\nCasa de churros\nAv. Lins de Vasconcelos, 1194 - Cambuci, São Paulo - SP, 01538-001\n\nSalão Alice\nSalão de Beleza\nAv. Lins de Vasconcelos, 1213 - Cambuci, São Paulo - SP, 01537-001',
+          content: 'Você se encontra na Av. Manuel Bandeira.\nPerto da sua localização encontramos possíveis lugares de interesse:\n\nSpark Arena\nLocal para eventos\nAv. Manuel Bandeira, 500 - Vila Leopoldina, São Paulo - SP, 05317-020\n\nPicPay\nEscritório da empresa\nAv. Manuel Bandeira, 291 - Bloco A - Vila Leopoldina, São Paulo - SP, 05317-020\n\nClínica Buzzini\nClínica de ginecologia e obstetrícia\nVilla Lobos Office Park, Torre C - Av. Queiroz Filho, 1700 - conj 604 - Vila Hamburguesa, São Paulo - SP, 05319-000\n\nCarrefour Hipermercado\nHipermercado\nAv. Queiroz Filho, Sn - Vila Leopoldina, São Paulo - SP, 05319-075\n\nFrozen - In Concert\nTeatro de Arena\nAv. Queiroz Filho, 1.315 - Vila Hamburguesa, São Paulo - SP, 05317-020',
           isUser: false,
         };
 
