@@ -4,7 +4,7 @@ O projeto **SeniorSmart** é um aplicativo móvel que visa auxiliar idosos no us
 
 ## Protótipo funcional da aplicação
 
-[Vídeo do protótipo](https://www.youtube.com/watch?v=HAWacXQwmb4)
+[Vídeo do protótipo](https://youtu.be/bTIsSFbi-U0?si=eqHhmgIvr0h-f9YA)
 
 ## Instalação e Configuração
 
